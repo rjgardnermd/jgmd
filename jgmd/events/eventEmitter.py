@@ -7,26 +7,25 @@ from ..util import exceptionToStr
 _emitter: EventEmitter = None
 
 
-def getEmitter(errorEvent: str = None, onError: Callable = None) -> EventEmitter:
+def getEmitter(onError: Callable = None) -> EventEmitter:
     global _emitter
     if _emitter is None:
-        _emitter = EventEmitter(errorEvent)
-        if not errorEvent or not onError:
+        _emitter = EventEmitter(onError)
+        if not onError:
             raise Exception(
-                "getEmitter() must be called with errorEvent and onError arguments on first call!"
+                "getEmitter() must be called with onError callable as an argument on first call!"
             )
-        _emitter.on(errorEvent, onError)
     return _emitter
 
 
 class EventEmitter:
-    def __init__(self, errorEvent: str):
+    def __init__(self, onError: Callable):
         if _emitter is not None:
             raise Exception(
                 "EventEmitter must be a singleton! Use getEmitter() to create/get the instance."
             )
         self._listeners: Dict[str, List[Callable]] = defaultdict(list)
-        self.errorEvent: str = errorEvent
+        self.onError: str = onError
 
     def on(self, event, listener):
         """Subscribe a listener to an event."""
@@ -60,17 +59,11 @@ class EventEmitter:
                 except Exception as e:
                     errorStrs.append(exceptionToStr(e))
         if errorStrs:
-            self.emit(
-                self.errorEvent,
-                f"Error during '{event}' event emission!\n" + "\n\t".join(errorStrs),
-            )
+            self.onError(event, *errorStrs)
 
     def _handle_task_exception(self, task: asyncio.Task, event: str):
         """Handle task exceptions."""
         try:
             task.result()  # This will raise the exception if the task failed
         except Exception as e:
-            self.emit(
-                self.errorEvent,
-                f"Error during '{event}' event emission!\n{exceptionToStr(e)}",
-            )
+            self.onError(event, exceptionToStr(e))

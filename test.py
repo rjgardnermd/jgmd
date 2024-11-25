@@ -1,8 +1,34 @@
 from jgmd.logging import LogLevel, Color, FreeTextLogger
-from jgmd.events import EventEmitter, getEmitter, handleError, handleErrorAsync
-from jgmd.util import loadEnv
+from jgmd.events import EventEmitter, getEmitter
+from jgmd.util import loadEnv, exceptionToStr
 import asyncio
 from pydantic import BaseModel
+
+ERROR_EVENT = "error"
+
+
+def handleError(func):
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except Exception as e:
+            error_message = exceptionToStr(e)
+            emitter = getEmitter()
+            emitter.emit(ERROR_EVENT, error_message)
+
+    return wrapper
+
+
+def handleErrorAsync(func):
+    async def wrapper(*args, **kwargs):
+        try:
+            return await func(*args, **kwargs)
+        except Exception as e:
+            error_message = exceptionToStr(e)
+            emitter = getEmitter()
+            emitter.emit(ERROR_EVENT, error_message)
+
+    return wrapper
 
 
 async def run():
@@ -15,10 +41,15 @@ async def run():
     logger.logDebug(lambda: f"Hello World!")
 
     # use the events module
-    def onError(event: str, *args, **kwargs):
-        logger.logError(lambda: f"An error occurred: {args[0]}")
+    def onEventEmitterError(event: str, *args):
+        logger.logError(
+            lambda: f"Error(s) occurred during event={event} emission: {'\n'.join(args)}"
+        )
 
-    eventEmitter: EventEmitter = getEmitter("error", onError)
+    def onError(*args, **kwargs):
+        logger.logError(lambda: f"Error(s) occurred: {'\n'.join(args)}, {kwargs}")
+
+    eventEmitter: EventEmitter = getEmitter(onEventEmitterError)
 
     def onTestEvent(event: str, *args, **kwargs):
         pass
@@ -48,6 +79,7 @@ async def run():
         logger.logDebug(lambda: "ASYNC #2 Done sleeping.", Color.YELLOW)
 
     EVENT_NAME = "test"
+    eventEmitter.on(ERROR_EVENT, onError)
     eventEmitter.on(EVENT_NAME, onTestEventAsync)
     eventEmitter.on(EVENT_NAME, onTestEvent)
     eventEmitter.on(EVENT_NAME, onTestEventAsync2)
