@@ -1,34 +1,34 @@
 from jgmd.logging import LogLevel, Color, FreeTextLogger
 from jgmd.events import EventEmitter, getEmitter
-from jgmd.util import loadEnv, exceptionToStr
+from jgmd.util import loadEnv, exceptionToStr, getErrorHandlingDecorators
 import asyncio
 from pydantic import BaseModel
 
 ERROR_EVENT = "error"
 
 
-def handleError(func):
-    def wrapper(*args, **kwargs):
-        try:
-            return func(*args, **kwargs)
-        except Exception as e:
-            error_message = exceptionToStr(e)
-            emitter = getEmitter()
-            emitter.emit(ERROR_EVENT, error_message)
+# def handleError(func):
+#     def wrapper(*args, **kwargs):
+#         try:
+#             return func(*args, **kwargs)
+#         except Exception as e:
+#             error_message = exceptionToStr(e)
+#             emitter = getEmitter()
+#             emitter.emit(ERROR_EVENT, error_message)
 
-    return wrapper
+#     return wrapper
 
 
-def handleErrorAsync(func):
-    async def wrapper(*args, **kwargs):
-        try:
-            return await func(*args, **kwargs)
-        except Exception as e:
-            error_message = exceptionToStr(e)
-            emitter = getEmitter()
-            emitter.emit(ERROR_EVENT, error_message)
+# def handleErrorAsync(func):
+#     async def wrapper(*args, **kwargs):
+#         try:
+#             return await func(*args, **kwargs)
+#         except Exception as e:
+#             error_message = exceptionToStr(e)
+#             emitter = getEmitter()
+#             emitter.emit(ERROR_EVENT, error_message)
 
-    return wrapper
+#     return wrapper
 
 
 async def run():
@@ -86,6 +86,11 @@ async def run():
     eventEmitter.emit(EVENT_NAME, 1, 2, 3, otherStuff="hello")
 
     logger.logDebug(lambda: "End of event test.")
+
+    def onDecoratorError(errorStr: str):
+        logger.logError(lambda: f"Error occurred in decorator: {errorStr}")
+
+    handleError, handleErrorAsync = getErrorHandlingDecorators(onDecoratorError)
 
     @handleError
     def trySomething():

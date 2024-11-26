@@ -25,7 +25,7 @@ class EventEmitter:
                 "EventEmitter must be a singleton! Use getEmitter() to create/get the instance."
             )
         self._listeners: Dict[str, List[Callable]] = defaultdict(list)
-        self.onError: str = onError
+        self.onError: Callable[[str], None] = onError
 
     def on(self, event, listener):
         """Subscribe a listener to an event."""
