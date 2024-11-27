@@ -1,6 +1,6 @@
 import traceback
 from datetime import datetime
-from typing import Callable
+from typing import Callable, Tuple
 
 
 def exceptionToStr(e: Exception) -> str:
@@ -9,7 +9,9 @@ def exceptionToStr(e: Exception) -> str:
     return error_message
 
 
-def getErrorHandlingDecorators(onError: Callable[[str], None]):
+def getErrorHandlingDecorators(
+    onError: Callable[[str], None]
+) -> Tuple[Callable, Callable]:
     def handleError(func):
         def wrapper(*args, **kwargs):
             try:
