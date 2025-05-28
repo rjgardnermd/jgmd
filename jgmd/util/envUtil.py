@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 from pydantic import BaseModel
+from pathlib import Path
 from typing import Type, TypeVar, Optional
 
 T = TypeVar("T", bound=BaseModel)
@@ -25,3 +26,18 @@ def loadEnv(pydanticModel: Type[T], dotenvPath: Optional[str] = None) -> T:
     }
 
     return pydanticModel(**env_values)
+
+
+def loadLocalEnv(pydanticModel: Type[T], filePath: str) -> T:
+    """
+    Load environment variables from a .env file co-located with the filePath.
+    e.g. to load a .env colocated with a given script/module, pass filePath=__file__
+
+    Args:
+        pydanticModel (Type[T]): A Pydantic model class.
+
+    Returns:
+        T: An instance of the model populated with environment variables.
+    """
+    dotenvPath = Path(filePath).parent / ".env"
+    return loadEnv(pydanticModel, dotenvPath=dotenvPath)
