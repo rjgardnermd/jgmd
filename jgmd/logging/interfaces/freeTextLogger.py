@@ -20,29 +20,34 @@ class FreeTextLogger(Logger):
         with open(self.filePath, "a") as file:
             file.write(s + "\n")
 
-    def logDebug(self, getStrToLog: Callable[[], str], color: Color = Color.PINK):
+    def logDebug(self, getStrToLog: Callable[[], str], color: Color = None):
         if self.logLevel == LogLevel.DEBUG:
             s = getStrToLog()
+            color = color or Color.PINK
             self._log(s, color.value)
 
-    def logInfo(self, getStrToLog: Callable[[], str], color: Color = Color.CYAN):
+    def logInfo(self, getStrToLog: Callable[[], str], color: Color = None):
         if self.logLevel == LogLevel.DEBUG or self.logLevel == LogLevel.INFO:
             s = getStrToLog()
+            color = color or Color.CYAN
             self._log(s, color.value)
 
-    def logWarning(self, getStrToLog: Callable[[], str], color: Color = Color.YELLOW):
+    def logWarning(self, getStrToLog: Callable[[], str], color: Color = None):
         if (
             self.logLevel == LogLevel.DEBUG
             or self.logLevel == LogLevel.INFO
             or self.logLevel == LogLevel.WARNING
         ):
             s = getStrToLog()
+            color = color or Color.YELLOW
             self._log(s, color.value)
 
-    def logError(self, getStrToLog: Callable[[], str], color: Color = Color.RED):
+    def logError(self, getStrToLog: Callable[[], str], color: Color = None):
         s = getStrToLog()
+        color = color or Color.RED
         self._log(s, color.value)
 
-    def logSuccessful(self, getStrToLog: Callable[[], str], color: Color = Color.GREEN):
+    def logSuccessful(self, getStrToLog: Callable[[], str], color: Color = None):
         s = getStrToLog()
+        color = color or Color.GREEN
         self._log(s, color.value)
