@@ -9,6 +9,7 @@ https://medium.com/@joel.barmettler/how-to-upload-your-python-package-to-pypi-65
 - update the code
 - ACTIVATE THE VENV: . ./venv/bin/activate
 - update release version in setup.py (two spots)
+- ENSURE THAT ANY NEW FOLDERS HAVE __init__.py (bc they won't be picked up otherwise -> package will silently fail to update)
 - run the following script with commitMsg and version as params
     ./runToUpdate.sh "commitMsg" "4.0.5"
 - then upgrade the package to test the new version: pip install jgmd --upgrade
