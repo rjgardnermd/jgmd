@@ -3,13 +3,13 @@ from setuptools import setup, find_packages
 setup(
     name="jgmd",
     packages=find_packages(),  # Automatically finds and includes all submodules in `jgmd`
-    version="4.0.7",
+    version="4.0.8",
     license="MIT",
     description="A general-purpose python package for logging, event-emission, and other common code.",
     author="Jonathan Gardner",
     author_email="jonathangardnermd@outlook.com",
     url="https://github.com/jonathangardnermd/jgmd",
-    download_url="https://github.com/jonathangardnermd/jgmd/archive/refs/tags/v4.0.7.tar.gz",
+    download_url="https://github.com/jonathangardnermd/jgmd/archive/refs/tags/v4.0.8.tar.gz",
     keywords=[
         "PYTHON",
         "LOGGING",
