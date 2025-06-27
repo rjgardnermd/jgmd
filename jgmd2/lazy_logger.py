@@ -1,0 +1,83 @@
+import logging
+from logging.handlers import RotatingFileHandler
+from typing import Callable, Optional, List, Any
+import coloredlogs
+from .success_level import add_success_log_level
+from .logger import Logger
+
+
+class LazyLogBuffer:
+    """
+    Buffer for deferred (lazy) log messages. Messages are only logged when flush() is called.
+    """
+
+    def __init__(self):
+        self._entries: List[tuple[str, Callable[[], str], dict]] = []
+
+    def add(
+        self, level: str, msg_func: Callable[[], str], kwargs: Optional[dict] = None
+    ):
+        self._entries.append((level, msg_func, kwargs or {}))
+
+    def flush(self, logger: "Logger"):
+        for level, msg_func, kwargs in self._entries:
+            getattr(logger, level.lower())(msg_func, **kwargs)
+        self._entries.clear()
+
+    def clear(self):
+        self._entries.clear()
+
+
+class LazyLogger(Logger):
+    """
+    Logger that buffers log messages and only emits them when flush_lazy() is called.
+    Use lazy_debug, lazy_info, lazy_warning, lazy_error, lazy_critical, lazy_success to buffer messages.
+    """
+
+    def __init__(
+        self,
+        name: str = "jgmd2",
+        log_file: Optional[str] = None,
+        log_level: int = logging.INFO,
+        max_bytes: int = 5 * 1024 * 1024,
+        backup_count: int = 3,
+        colored_console: bool = True,
+    ):
+        add_success_log_level()
+        super().__init__(
+            name, log_file, log_level, max_bytes, backup_count, colored_console
+        )
+        self.buffer = LazyLogBuffer()
+
+    def lazy_debug(self, msg_func: Callable[[], str], *args, **kwargs):
+        self.buffer.add("DEBUG", msg_func, kwargs)
+
+    def lazy_info(self, msg_func: Callable[[], str], *args, **kwargs):
+        self.buffer.add("INFO", msg_func, kwargs)
+
+    def lazy_warning(self, msg_func: Callable[[], str], *args, **kwargs):
+        self.buffer.add("WARNING", msg_func, kwargs)
+
+    def lazy_error(self, msg_func: Callable[[], str], *args, **kwargs):
+        self.buffer.add("ERROR", msg_func, kwargs)
+
+    def lazy_critical(self, msg_func: Callable[[], str], *args, **kwargs):
+        self.buffer.add("CRITICAL", msg_func, kwargs)
+
+    def lazy_success(self, msg_func: Callable[[], str], *args, **kwargs):
+        self.buffer.add("SUCCESS", msg_func, kwargs)
+
+    def flush_lazy(self):
+        self.buffer.flush(self)
+
+    def clear_lazy(self):
+        self.buffer.clear()
+
+
+# Example usage (to be removed or moved to docs/tests):
+# logger = LazyLogger("myapp", log_file="myapp.log", log_level=logging.DEBUG)
+# logger.debug(lambda: f"Debug value: {expensive_func()}")
+# logger.success(lambda: "Operation completed successfully!")
+# logger.lazy_info(lambda: f"Deferred info: {expensive_func()}")
+# logger.lazy_success(lambda: "Deferred success!")
+# logger.flush_lazy()
