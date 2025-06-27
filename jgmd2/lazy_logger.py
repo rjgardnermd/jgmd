@@ -1,7 +1,6 @@
 import logging
 from logging.handlers import RotatingFileHandler
 from typing import Callable, Optional, List, Any, Union
-import coloredlogs
 from .success_level import add_success_log_level
 from .logger import Logger
 from .color_utils import Colors

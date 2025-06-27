@@ -14,14 +14,3 @@ def add_success_log_level():
                 self._log(SUCCESS_LEVEL_NUM, message, args, **kws)
 
         logging.Logger.success = success
-
-    # Patch coloredlogs to support the new level
-    try:
-        import coloredlogs
-
-        if SUCCESS_LEVEL_NAME not in coloredlogs.DEFAULT_LEVEL_STYLES:
-            coloredlogs.DEFAULT_LEVEL_STYLES[SUCCESS_LEVEL_NAME] = {
-                "color": SUCCESS_COLOR
-            }
-    except ImportError:
-        pass
