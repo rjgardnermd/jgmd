@@ -213,6 +213,15 @@ class Logger:
     ):
         self.log(LogLevels.CRITICAL, msg_func, color, *args, **kwargs)
 
+    def success(
+        self,
+        msg_func: Callable[[], str],
+        color: Optional[Colors] = Colors.GREEN,
+        *args,
+        **kwargs,
+    ):
+        self.log(LogLevels.CRITICAL, msg_func, color, *args, **kwargs)
+
     def print_header(self, title: str, color: Optional[Colors] = None):
         """
         Print a formatted header with the given title.
