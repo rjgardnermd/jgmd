@@ -1,9 +1,57 @@
 import logging
 from logging.handlers import RotatingFileHandler
 from typing import Callable, Optional, Union
-import coloredlogs
+import sys
+from datetime import datetime
 from .success_level import add_success_log_level
 from .color_utils import Colors, colorize, get_color_by_name
+
+
+class ColoredStreamHandler(logging.StreamHandler):
+    """Custom stream handler that applies colors to console output with nice formatting."""
+
+    DEFAULT_COLORS = {
+        "DEBUG": Colors.CYAN,
+        "INFO": Colors.WHITE,
+        "WARNING": Colors.YELLOW,
+        "ERROR": Colors.RED,
+        "CRITICAL": Colors.BRIGHT_RED,
+        "SUCCESS": Colors.GREEN,
+    }
+
+    def __init__(self, stream=None, default_colors=None):
+        super().__init__(stream or sys.stdout)
+        self.default_colors = default_colors or self.DEFAULT_COLORS
+
+    def format(self, record):
+        """Format the log record with colors for different parts."""
+        # Format timestamp
+        timestamp = datetime.fromtimestamp(record.created).strftime("%Y-%m-%d %H:%M:%S")
+        colored_timestamp = colorize(timestamp, Colors.GREEN)
+
+        # Format level name with bold and gray
+        level_name = record.levelname
+        colored_level = colorize(level_name, Colors.BOLD + Colors.BRIGHT_BLACK)
+
+        # Format logger name in blue
+        colored_name = colorize(record.name, Colors.BLUE)
+
+        # Format message with default color for the level (or custom color if specified)
+        default_color = self.default_colors.get(level_name, Colors.WHITE)
+        custom_color = getattr(record, "custom_color", None)
+        message_color = custom_color if custom_color is not None else default_color
+        colored_message = colorize(record.getMessage(), message_color)
+
+        # Combine all parts
+        return f"{colored_timestamp} {colored_level} {colored_name} {colored_message}"
+
+    def emit(self, record):
+        try:
+            msg = self.format(record)
+            self.stream.write(msg + "\n")
+            self.flush()
+        except Exception:
+            self.handleError(record)
 
 
 class Logger:
@@ -49,11 +97,9 @@ class Logger:
             self.logger.removeHandler(handler)
 
         if colored_console:
-            coloredlogs.install(
-                level=log_level,
-                logger=self.logger,
-                fmt="%(asctime)s %(levelname)s %(name)s %(message)s",
-            )
+            console_handler = ColoredStreamHandler()
+            console_handler.setLevel(log_level)
+            self.logger.addHandler(console_handler)
         if log_file:
             file_handler = RotatingFileHandler(
                 log_file, maxBytes=max_bytes, backupCount=backup_count
@@ -76,44 +122,45 @@ class Logger:
         except:
             pass
 
-    def _apply_color(self, message: str, color: Optional[Union[str, Colors]]) -> str:
-        """Apply color to message if console output is enabled and color is specified."""
-        if not self.colored_console or color is None:
-            return message
-
-        if isinstance(color, str):
-            try:
-                color_code = get_color_by_name(color)
-            except ValueError:
-                # If it's not a recognized color name, treat it as a color code
-                color_code = color
-        else:
-            color_code = color
-
-        return colorize(message, color_code)
-
     def log(
         self,
         level: str,
         msg_func: Callable[[], str],
         color: Optional[Union[str, Colors]] = None,
         *args,
-        **kwargs
+        **kwargs,
     ):
         levelno = (
             logging.getLevelName(level.upper()) if isinstance(level, str) else level
         )
         if self.logger.isEnabledFor(levelno):
             message = msg_func()
-            colored_message = self._apply_color(message, color)
-            self.logger.log(levelno, colored_message, *args, **kwargs)
+
+            # Create a log record
+            record = self.logger.makeRecord(
+                self.logger.name, levelno, "", 0, message, args, None
+            )
+
+            # Add custom color to the record if specified
+            if color is not None:
+                if isinstance(color, str):
+                    try:
+                        color_code = get_color_by_name(color)
+                    except ValueError:
+                        color_code = color
+                else:
+                    color_code = color
+                record.custom_color = color_code
+
+            # Log the record
+            self.logger.handle(record)
 
     def debug(
         self,
         msg_func: Callable[[], str],
         color: Optional[Union[str, Colors]] = None,
         *args,
-        **kwargs
+        **kwargs,
     ):
         self.log("DEBUG", msg_func, color, *args, **kwargs)
 
@@ -122,7 +169,7 @@ class Logger:
         msg_func: Callable[[], str],
         color: Optional[Union[str, Colors]] = None,
         *args,
-        **kwargs
+        **kwargs,
     ):
         self.log("INFO", msg_func, color, *args, **kwargs)
 
@@ -131,7 +178,7 @@ class Logger:
         msg_func: Callable[[], str],
         color: Optional[Union[str, Colors]] = None,
         *args,
-        **kwargs
+        **kwargs,
     ):
         self.log("WARNING", msg_func, color, *args, **kwargs)
 
@@ -140,7 +187,7 @@ class Logger:
         msg_func: Callable[[], str],
         color: Optional[Union[str, Colors]] = None,
         *args,
-        **kwargs
+        **kwargs,
     ):
         self.log("ERROR", msg_func, color, *args, **kwargs)
 
@@ -149,7 +196,7 @@ class Logger:
         msg_func: Callable[[], str],
         color: Optional[Union[str, Colors]] = None,
         *args,
-        **kwargs
+        **kwargs,
     ):
         self.log("CRITICAL", msg_func, color, *args, **kwargs)
 
@@ -158,6 +205,6 @@ class Logger:
         msg_func: Callable[[], str],
         color: Optional[Union[str, Colors]] = None,
         *args,
-        **kwargs
+        **kwargs,
     ):
         self.log("SUCCESS", msg_func, color, *args, **kwargs)
