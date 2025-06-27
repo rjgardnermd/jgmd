@@ -42,14 +42,21 @@ class LazyLogger(Logger):
     def __init__(
         self,
         name: str = "jgmd2",
-        log_file: Optional[str] = None,
+        log_directory: Optional[str] = None,
+        file_name: Optional[str] = None,
         log_level: int = logging.INFO,
         max_bytes: int = 5 * 1024 * 1024,
         backup_count: int = 3,
         colored_console: bool = True,
     ):
         super().__init__(
-            name, log_file, log_level, max_bytes, backup_count, colored_console
+            name=name,
+            log_directory=log_directory,
+            file_name=file_name,
+            log_level=log_level,
+            max_bytes=max_bytes,
+            backup_count=backup_count,
+            colored_console=colored_console,
         )
         self.buffer = LazyLogBuffer()
 

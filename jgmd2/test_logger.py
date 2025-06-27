@@ -8,35 +8,35 @@ from jgmd2 import Logger, LazyLogger, TableLogger
 
 class TestLogger(unittest.TestCase):
     def setUp(self):
-        self.tempfile = tempfile.NamedTemporaryFile(delete=False)
-        self.log_file = self.tempfile.name
+        self.tempdir = tempfile.TemporaryDirectory()
+        self.log_file = os.path.join(self.tempdir.name, "testlogger.log")
         self.logger = Logger(
-            name="testlogger", log_file=self.log_file, log_level=logging.DEBUG
+            name="testlogger",
+            log_directory=self.tempdir.name,
+            file_name="testlogger.log",
+            log_level=logging.DEBUG,
         )
 
     def tearDown(self):
         self.logger.close()
-        self.tempfile.close()
-        if os.path.exists(self.log_file):
-            os.remove(self.log_file)
+        self.tempdir.cleanup()
 
     def test_immediate_logging_levels(self):
         # Patch the logger to capture output
-        with patch.object(self.logger.logger, "log") as mock_log:
+        with patch.object(self.logger.logger, "handle") as mock_handle:
             self.logger.debug(lambda: "debug message")
             self.logger.info(lambda: "info message")
             self.logger.warning(lambda: "warning message")
             self.logger.error(lambda: "error message")
             self.logger.critical(lambda: "critical message")
-            self.logger.success(lambda: "success message")
-            self.assertEqual(mock_log.call_count, 6)
-            calls = [call[0][0] for call in mock_log.call_args_list]
-            self.assertIn(logging.DEBUG, calls)
-            self.assertIn(logging.INFO, calls)
-            self.assertIn(logging.WARNING, calls)
-            self.assertIn(logging.ERROR, calls)
-            self.assertIn(logging.CRITICAL, calls)
-            self.assertIn(25, calls)  # SUCCESS level
+            self.logger.info(lambda: "success message", color="green")
+            self.assertEqual(mock_handle.call_count, 6)
+            levels = [call[0][0].levelno for call in mock_handle.call_args_list]
+            self.assertIn(logging.DEBUG, levels)
+            self.assertIn(logging.INFO, levels)
+            self.assertIn(logging.WARNING, levels)
+            self.assertIn(logging.ERROR, levels)
+            self.assertIn(logging.CRITICAL, levels)
 
     def test_deferred_evaluation(self):
         called = []
@@ -54,27 +54,28 @@ class TestLogger(unittest.TestCase):
             content = f.read()
         self.assertIn("file test message", content)
 
-    def test_success_log_level(self):
-        self.logger.success(lambda: "successful!")
+    def test_success_log_color(self):
+        self.logger.info(lambda: "successful!", color="green")
         with open(self.log_file, "r") as f:
             content = f.read()
         self.assertIn("successful!", content)
-        self.assertIn("SUCCESS", content)
+        self.assertIn("INFO", content)
 
 
 class TestLazyLogger(unittest.TestCase):
     def setUp(self):
-        self.tempfile = tempfile.NamedTemporaryFile(delete=False)
-        self.log_file = self.tempfile.name
+        self.tempdir = tempfile.TemporaryDirectory()
+        self.log_file = os.path.join(self.tempdir.name, "testlazylogger.log")
         self.logger = LazyLogger(
-            name="testlazylogger", log_file=self.log_file, log_level=logging.DEBUG
+            name="testlazylogger",
+            log_directory=self.tempdir.name,
+            file_name="testlazylogger.log",
+            log_level=logging.DEBUG,
         )
 
     def tearDown(self):
         self.logger.close()
-        self.tempfile.close()
-        if os.path.exists(self.log_file):
-            os.remove(self.log_file)
+        self.tempdir.cleanup()
 
     def test_lazy_logging(self):
         called = []
@@ -85,7 +86,9 @@ class TestLazyLogger(unittest.TestCase):
         self.logger.lazy_critical(
             lambda: called.append("critical") or "critical message"
         )
-        self.logger.lazy_success(lambda: called.append("success") or "success message")
+        self.logger.lazy_info(
+            lambda: called.append("success") or "success message", color="green"
+        )
         # Nothing should be called yet
         self.assertEqual(called, [])
         self.logger.flush_lazy()
@@ -113,21 +116,20 @@ class TestLazyLogger(unittest.TestCase):
 
 class TestTableLogger(unittest.TestCase):
     def setUp(self):
-        self.tempfile = tempfile.NamedTemporaryFile(delete=False)
-        self.log_file = self.tempfile.name
+        self.tempdir = tempfile.TemporaryDirectory()
+        self.log_file = os.path.join(self.tempdir.name, "testtablelogger.log")
         self.headers = ["col1", "col2"]
         self.logger = TableLogger(
             self.headers,
             name="testtablelogger",
-            log_file=self.log_file,
+            log_directory=self.tempdir.name,
+            file_name="testtablelogger.log",
             log_level=logging.INFO,
         )
 
     def tearDown(self):
         self.logger.close()
-        self.tempfile.close()
-        if os.path.exists(self.log_file):
-            os.remove(self.log_file)
+        self.tempdir.cleanup()
 
     def test_log_row(self):
         self.logger.log_row(lambda: [1, 2])

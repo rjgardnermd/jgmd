@@ -23,7 +23,8 @@ def demo_immediate_logging():
 
     logger = Logger(
         name="immediate_demo",
-        log_file="immediate_demo.log",
+        log_directory="logs",
+        file_name="immediate_demo.log",
         log_level="DEBUG",
         colored_console=True,
     )
@@ -36,10 +37,10 @@ def demo_immediate_logging():
     logger.warning(lambda: f"Warning: High memory usage detected")
     logger.error(lambda: f"Error: Failed to connect to database")
     logger.critical(lambda: f"Critical: System shutdown required")
-    logger.success(lambda: f"Success: Operation completed successfully!")
+    logger.info(lambda: f"Success: Operation completed successfully!", color="green")
 
     print("✓ All messages logged immediately to console and file")
-    print("Check 'immediate_demo.log' for file output")
+    print("Check 'logs/immediate_demo.log' for file output")
 
     logger.close()
 
@@ -52,7 +53,8 @@ def demo_lazy_logging():
 
     logger = LazyLogger(
         name="lazy_demo",
-        log_file="lazy_demo.log",
+        log_directory="logs",
+        file_name="lazy_demo.log",
         log_level="DEBUG",
         colored_console=True,
     )
@@ -65,7 +67,9 @@ def demo_lazy_logging():
     logger.lazy_warning(lambda: f"Lazy Warning: Performance degradation detected")
     logger.lazy_error(lambda: f"Lazy Error: Network timeout")
     logger.lazy_critical(lambda: f"Lazy Critical: Data corruption detected")
-    logger.lazy_success(lambda: f"Lazy Success: Batch processing completed!")
+    logger.lazy_info(
+        lambda: f"Lazy Success: Batch processing completed!", color="green"
+    )
 
     print("✓ Messages buffered (not logged yet)")
     print("Flushing buffered messages...")
@@ -74,7 +78,7 @@ def demo_lazy_logging():
     logger.flush_lazy()
 
     print("✓ All buffered messages now logged to console and file")
-    print("Check 'lazy_demo.log' for file output")
+    print("Check 'logs/lazy_demo.log' for file output")
 
     logger.close()
 
@@ -91,7 +95,8 @@ def demo_table_logging():
     logger = TableLogger(
         headers=headers,
         name="table_demo",
-        log_file="table_demo.log",
+        log_directory="logs",
+        file_name="table_demo.log",
         log_level="INFO",
         colored_console=True,
     )
@@ -128,7 +133,7 @@ def demo_table_logging():
     logger.flush_lazy()
 
     print("✓ All table data logged to console and file")
-    print("Check 'table_demo.log' for file output")
+    print("Check 'logs/table_demo.log' for file output")
 
     logger.close()
 
@@ -173,7 +178,8 @@ def demo_file_rotation():
 
     logger = Logger(
         name="rotation_demo",
-        log_file="rotation_demo.log",
+        log_directory="logs",
+        file_name="rotation_demo.log",
         log_level="DEBUG",
         max_bytes=1024,  # Small size to trigger rotation quickly
         backup_count=3,
@@ -189,7 +195,7 @@ def demo_file_rotation():
         )  # Long message to fill file quickly
 
     print("✓ File rotation should have occurred")
-    print("Check for rotation_demo.log, rotation_demo.log.1, etc.")
+    print("Check for logs/rotation_demo.log, logs/rotation_demo.log.1, etc.")
 
     logger.close()
 
