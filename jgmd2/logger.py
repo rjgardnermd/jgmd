@@ -207,3 +207,16 @@ class Logger:
         **kwargs,
     ):
         self.log("CRITICAL", msg_func, color, *args, **kwargs)
+
+    def print_header(self, title: str, color: Optional[Union[str, Colors]] = None):
+        """
+        Print a formatted header with the given title.
+
+        Args:
+            title: The title to display in the header
+            color: Optional color for the header (defaults to white)
+        """
+        header_lines = ["=" * 60, title, "=" * 60]
+
+        for line in header_lines:
+            self.info(lambda: line, color=color)

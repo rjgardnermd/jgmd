@@ -105,6 +105,19 @@ class LazyLogger(Logger):
     ):
         self.buffer.add("CRITICAL", msg_func, kwargs, color)
 
+    def lazy_print_header(self, title: str, color: Optional[Union[str, Colors]] = None):
+        """
+        Buffer a formatted header with the given title (lazy version).
+
+        Args:
+            title: The title to display in the header
+            color: Optional color for the header (defaults to white)
+        """
+        header_lines = ["=" * 60, title, "=" * 60]
+
+        for line in header_lines:
+            self.lazy_info(lambda: line, color=color)
+
     def flush_lazy(self):
         self.buffer.flush(self)
 
