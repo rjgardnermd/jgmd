@@ -4,8 +4,8 @@ from typing import Callable, Optional, Union, Dict
 import sys
 import os
 from datetime import datetime
-from .colors import Colors
-from .logLevels import LogLevels
+from ..enums.colors import Colors
+from ..enums.log_levels import LogLevels
 
 
 def ensure_dir_exists(directory_path: str):

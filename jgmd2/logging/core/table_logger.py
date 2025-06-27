@@ -4,18 +4,11 @@ Supports deferred (lambda/callable) row/table data, immediate and lazy (buffered
 and pretty-prints tables using the 'tabulate' library.
 """
 
-try:
-    from tabulate import tabulate
-except ImportError:
-    raise ImportError(
-        "The 'tabulate' library is required for TableLogger. Install it with 'pip install tabulate'."
-    )
-
-import logging
+from tabulate import tabulate
 from typing import Callable, List, Any, Optional, Union
 from .lazy_logger import LazyLogger
-from .colors import Colors
-from .logLevels import LogLevels
+from ..enums.colors import Colors
+from ..enums.log_levels import LogLevels
 
 
 class TableLogger(LazyLogger):

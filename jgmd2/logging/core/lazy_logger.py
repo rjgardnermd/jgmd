@@ -1,8 +1,7 @@
-import logging
 from typing import Callable, Optional, List, Any, Union
 from .logger import Logger
-from .colors import Colors
-from .logLevels import LogLevels
+from ..enums.colors import Colors
+from ..enums.log_levels import LogLevels
 
 
 class LazyLogBuffer:

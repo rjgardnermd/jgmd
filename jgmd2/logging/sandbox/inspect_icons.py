@@ -4,10 +4,7 @@ Icon Inspector: A sandbox script to inspect all icons and see their visual spaci
 This helps identify which icons take up more space than others in terminal output.
 """
 
-from jgmd2 import Logger
-from jgmd2.icons import Icons
-from jgmd2.colors import Colors
-from jgmd2.logLevels import LogLevels
+from jgmd2.logging import Logger, Colors, Icons, LogLevels
 
 
 def inspect_all_icons():

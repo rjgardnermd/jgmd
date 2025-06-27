@@ -3,7 +3,7 @@
 Test script to demonstrate the LazyLogger sync_mode functionality.
 """
 
-from jgmd2.lazy_logger import LazyLogger
+from jgmd2.logging.core.lazy_logger import LazyLogger
 import time
 
 

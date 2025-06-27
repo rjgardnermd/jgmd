@@ -6,11 +6,7 @@ Run this script to see how Logger, LazyLogger, and TableLogger work.
 
 import time
 import random
-import os
-from jgmd2 import Logger, LazyLogger, TableLogger
-from jgmd2.colors import Colors
-from jgmd2.icons import Icons
-from jgmd2.logLevels import LogLevels
+from jgmd2.logging import Logger, LazyLogger, TableLogger, Colors, Icons, LogLevels
 
 
 def expensive_operation():
@@ -260,67 +256,28 @@ def demo_icons_and_colors():
     logger.close()
 
 
-# def demo_cloud_logging_compatibility():
-#     """Demonstrate cloud logging compatibility with text alternatives."""
-#     logger = Logger(name="cloud_demo", log_level=LogLevels.INFO, colored_console=True)
-
-#     logger.print_header(
-#         f"{Icons.TARGET.value} DEMO: Cloud Logging Compatibility",
-#         color=Colors.BRIGHT_CYAN,
-#     )
-
-#     print("Emoji icons (default):")
-#     logger.info(lambda: f"{Icons.SUCCESS} Operation completed")
-#     logger.info(lambda: f"{Icons.ERROR} Something went wrong")
-#     logger.info(lambda: f"{Icons.ROCKET} Application launched")
-
-#     # print("\nText alternatives (cloud-friendly):")
-#     # logger.info(
-#     #     lambda: f"{Icons.get_icon('SUCCESS', use_icons=False)} Operation completed"
-#     # )
-#     # logger.info(
-#     #     lambda: f"{Icons.get_icon('ERROR', use_icons=False)} Something went wrong"
-#     # )
-#     # logger.info(
-#     #     lambda: f"{Icons.get_icon('ROCKET', use_icons=False)} Application launched"
-#     # )
-
-#     print("\nEnvironment variable control:")
-#     print("Set JGMD_USE_ICONS=false to disable emojis globally")
-#     print("Set JGMD_USE_ICONS=true to enable emojis (default)")
-
-#     logger.close()
-
-
 def main():
     """Run all demos."""
     print(f"{Icons.TARGET.value} jgmd2 Logging Framework - Feature Demo")
     print("This script demonstrates all features of the logging framework.")
 
-    try:
-        # Run all demos
-        demo_immediate_logging()
-        demo_lazy_logging()
-        # demo_table_logging()
-        # demo_deferred_evaluation()
-        # demo_file_rotation()
-        # demo_icons_and_colors()
-        # demo_cloud_logging_compatibility()
+    # Run all demos
+    demo_immediate_logging()
+    demo_lazy_logging()
+    demo_table_logging()
+    demo_deferred_evaluation()
+    demo_file_rotation()
+    demo_icons_and_colors()
 
-        print("\n" + "=" * 60)
-        print(f"{Icons.PARTY.value} ALL DEMOS COMPLETED!")
-        print("=" * 60)
-        print("Generated log files:")
-        print("  - immediate_demo.log")
-        print("  - lazy_demo.log")
-        print("  - table_demo.log")
-        print("  - rotation_demo.log (and rotated backups)")
-        print("\nFeel free to examine these files to see the output!")
-
-    except KeyboardInterrupt:
-        print(f"\n\n{Icons.HAND.value} Demo interrupted by user.")
-    # except Exception as e:
-    #     print(f"\n{Icons.BUG.value} Error during demo: {e}")
+    print("\n" + "=" * 60)
+    print(f"{Icons.PARTY.value} ALL DEMOS COMPLETED!")
+    print("=" * 60)
+    print("Generated log files:")
+    print("  - immediate_demo.log")
+    print("  - lazy_demo.log")
+    print("  - table_demo.log")
+    print("  - rotation_demo.log (and rotated backups)")
+    print("\nFeel free to examine these files to see the output!")
 
 
 if __name__ == "__main__":

@@ -2,11 +2,8 @@ import unittest
 import logging
 import os
 import tempfile
-from unittest.mock import patch, MagicMock
-from jgmd2 import Logger, LazyLogger, TableLogger
-from jgmd2.colors import Colors
-from jgmd2.icons import Icons
-from jgmd2.logLevels import LogLevels
+from unittest.mock import patch
+from jgmd2.logging import Logger, LazyLogger, TableLogger, Colors, Icons, LogLevels
 
 
 class TestLogger(unittest.TestCase):
