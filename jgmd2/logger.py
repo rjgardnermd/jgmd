@@ -2,9 +2,16 @@ import logging
 from logging.handlers import RotatingFileHandler
 from typing import Callable, Optional, Union
 import sys
+import os
 from datetime import datetime
 from .success_level import add_success_log_level
 from .color_utils import Colors, colorize, get_color_by_name
+
+
+def ensure_dir_exists(directory_path: str):
+    """Create directory if it doesn't exist."""
+    if directory_path and not os.path.exists(directory_path):
+        os.makedirs(directory_path)
 
 
 class ColoredStreamHandler(logging.StreamHandler):
@@ -74,7 +81,8 @@ class Logger:
     def __init__(
         self,
         name: str = "jgmd2",
-        log_file: Optional[str] = None,
+        log_directory: Optional[str] = None,
+        file_name: Optional[str] = None,
         log_level: int = logging.INFO,
         max_bytes: int = 5 * 1024 * 1024,
         backup_count: int = 3,
@@ -84,13 +92,17 @@ class Logger:
         self.logger = logging.getLogger(name)
         self.logger.setLevel(log_level)
         self.colored_console = colored_console
-        self._setup_handlers(
-            log_file, log_level, max_bytes, backup_count, colored_console
-        )
 
-    def _setup_handlers(
-        self, log_file, log_level, max_bytes, backup_count, colored_console
-    ):
+        # Set up log file path
+        if log_directory is not None and file_name is not None:
+            ensure_dir_exists(log_directory)
+            self.log_file_path = f"{log_directory}/{file_name}"
+        else:
+            self.log_file_path = None
+
+        self._setup_handlers(log_level, max_bytes, backup_count, colored_console)
+
+    def _setup_handlers(self, log_level, max_bytes, backup_count, colored_console):
         # Close existing handlers before clearing
         for handler in self.logger.handlers[:]:
             handler.close()
@@ -100,9 +112,9 @@ class Logger:
             console_handler = ColoredStreamHandler()
             console_handler.setLevel(log_level)
             self.logger.addHandler(console_handler)
-        if log_file:
+        if self.log_file_path:
             file_handler = RotatingFileHandler(
-                log_file, maxBytes=max_bytes, backupCount=backup_count
+                self.log_file_path, maxBytes=max_bytes, backupCount=backup_count
             )
             file_handler.setFormatter(
                 logging.Formatter("%(asctime)s %(levelname)s %(name)s %(message)s")
