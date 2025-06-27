@@ -34,7 +34,7 @@ class ColoredStreamHandler(StreamHandler):
     def __init__(self, stream: TextIO = None):
         super().__init__(stream or sys.stdout)
 
-    def setDefaultColors(self, default_colors: Dict[str, Colors]):
+    def set_default_colors(self, default_colors: Dict[str, Colors]):
         """Set default colors for log levels."""
         self.default_colors = {level: color for level, color in DEFAULT_COLORS.items()}
         if default_colors is not None:
@@ -124,7 +124,7 @@ class Logger:
 
         if colored_console:
             console_handler = ColoredStreamHandler()
-            console_handler.setDefaultColors(default_colors)
+            console_handler.set_default_colors(default_colors)
             console_handler.setLevel(log_level)
             self.logger.addHandler(console_handler)
         if self.log_file_path:
