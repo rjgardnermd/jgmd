@@ -1,5 +1,5 @@
 import time
-from datetime import datetime, timezone, timedelta, time
+from datetime import datetime, timezone, timedelta
 
 
 # create time_it decorator
