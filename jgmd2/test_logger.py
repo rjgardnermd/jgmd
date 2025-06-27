@@ -15,6 +15,7 @@ class TestLogger(unittest.TestCase):
         )
 
     def tearDown(self):
+        self.logger.close()
         self.tempfile.close()
         if os.path.exists(self.log_file):
             os.remove(self.log_file)
@@ -70,6 +71,7 @@ class TestLazyLogger(unittest.TestCase):
         )
 
     def tearDown(self):
+        self.logger.close()
         self.tempfile.close()
         if os.path.exists(self.log_file):
             os.remove(self.log_file)
@@ -122,6 +124,7 @@ class TestTableLogger(unittest.TestCase):
         )
 
     def tearDown(self):
+        self.logger.close()
         self.tempfile.close()
         if os.path.exists(self.log_file):
             os.remove(self.log_file)

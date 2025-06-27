@@ -31,7 +31,11 @@ class Logger:
     def _setup_handlers(
         self, log_file, log_level, max_bytes, backup_count, colored_console
     ):
-        self.logger.handlers.clear()
+        # Close existing handlers before clearing
+        for handler in self.logger.handlers[:]:
+            handler.close()
+            self.logger.removeHandler(handler)
+
         if colored_console:
             coloredlogs.install(
                 level=log_level,
@@ -46,6 +50,19 @@ class Logger:
                 logging.Formatter("%(asctime)s %(levelname)s %(name)s %(message)s")
             )
             self.logger.addHandler(file_handler)
+
+    def close(self):
+        """Close all handlers and clean up resources."""
+        for handler in self.logger.handlers[:]:
+            handler.close()
+            self.logger.removeHandler(handler)
+
+    def __del__(self):
+        """Destructor to ensure handlers are closed."""
+        try:
+            self.close()
+        except:
+            pass
 
     def log(self, level: str, msg_func: Callable[[], str], *args, **kwargs):
         levelno = (
