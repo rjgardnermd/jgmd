@@ -26,6 +26,9 @@ def demo_immediate_logging():
         file_name="immediate_demo.log",
         log_level="DEBUG",
         colored_console=True,
+        default_colors={
+            "DEBUG": Colors.MAGENTA,
+        },
     )
 
     logger.print_header(
@@ -319,3 +322,16 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+    logger = Logger(
+        name="immediate_demo",
+        log_directory="logs",
+        file_name="immediate_demo.log",
+        log_level="DEBUG",
+        colored_console=True,
+        default_colors={
+            "DEBUG": Colors.MAGENTA,
+        },
+    )
+
+    logger.debug(lambda: f"{Icons.BUG.value} This is a debug message")

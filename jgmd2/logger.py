@@ -37,8 +37,11 @@ class ColoredStreamHandler(logging.StreamHandler):
         "CRITICAL": Colors.BRIGHT_RED,
     }
 
-    def __init__(self, stream=None, default_colors: Dict[str, Colors] = None):
+    def __init__(self, stream=None):
         super().__init__(stream or sys.stdout)
+
+    def setDefaultColors(self, default_colors: Dict[str, Colors]):
+        """Set default colors for log levels."""
         self.default_colors = {
             level: color for level, color in self.DEFAULT_COLORS.items()
         }
@@ -101,6 +104,7 @@ class Logger:
         max_bytes: int = 5 * 1024 * 1024,
         backup_count: int = 3,
         colored_console: bool = True,
+        default_colors: Optional[Dict[str, Colors]] = None,
     ):
         self.logger = logging.getLogger(name)
         self.logger.setLevel(log_level)
@@ -113,9 +117,13 @@ class Logger:
         else:
             self.log_file_path = None
 
-        self._setup_handlers(log_level, max_bytes, backup_count, colored_console)
+        self._setup_handlers(
+            log_level, max_bytes, backup_count, colored_console, default_colors
+        )
 
-    def _setup_handlers(self, log_level, max_bytes, backup_count, colored_console):
+    def _setup_handlers(
+        self, log_level, max_bytes, backup_count, colored_console, default_colors
+    ):
         # Close existing handlers before clearing
         for handler in self.logger.handlers[:]:
             handler.close()
@@ -123,6 +131,7 @@ class Logger:
 
         if colored_console:
             console_handler = ColoredStreamHandler()
+            console_handler.setDefaultColors(default_colors)
             console_handler.setLevel(log_level)
             self.logger.addHandler(console_handler)
         if self.log_file_path:
