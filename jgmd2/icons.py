@@ -9,7 +9,7 @@ class Icons(Enum):
     SUCCESS = "✅"
     COMPLETE = "🎉"
     DONE = "✨"
-    CHECK = "✓"
+    CHECK = "✓ "
 
     # Information
     INFO = "ℹ️ "
@@ -25,17 +25,17 @@ class Icons(Enum):
     # Error/Failure
     ERROR = "❌"
     FAIL = "💥"
-    BUG = "🪲"
+    BUG = "🪲 "
     CRASH = "💀"
 
     # Processing/Progress
     LOADING = "⏳"
     SPINNER = "🔄"
-    GEAR = "⚙️"
+    GEAR = "⚙️ "
     ROCKET = "🚀"
 
     # Data/Storage
-    DATABASE = "🗄️"
+    DATABASE = "🗄️ "
     FILE = "📁"
     FOLDER = "📂"
     DISK = "��"
@@ -49,7 +49,7 @@ class Icons(Enum):
 
     # Time
     CLOCK = "⏰"
-    TIMER = "⏱️"
+    TIMER = "⏱️ "
     CALENDAR = "📅"
 
     # User/Action
@@ -61,7 +61,7 @@ class Icons(Enum):
 
     # Development
     CODE = "💻"
-    TERMINAL = "🖥️"
+    TERMINAL = "🖥️ "
     DEBUG = "🔍"
     TEST = "🧪"
 
@@ -75,7 +75,7 @@ class Icons(Enum):
     PARTY = "🎊"
     GIFT = "🎁"
     STAR = "⭐"
-    HEART = "❤️"
+    HEART = "❤️ "
     FIRE = "🔥"
     COOL = "😎"
 
