@@ -12,13 +12,13 @@ class Icons(Enum):
     CHECK = "✓"
 
     # Information
-    INFO = "ℹ️"
+    INFO = "ℹ️ "
     NOTE = "📝"
     BULB = "💡"
     BOOK = "📚"
 
     # Warning
-    WARNING = "⚠️"
+    WARNING = "⚠️ "
     ALERT = "🚨"
     BELL = "🔔"
 

@@ -301,10 +301,10 @@ def main():
         # Run all demos
         demo_immediate_logging()
         demo_lazy_logging()
-        demo_table_logging()
-        demo_deferred_evaluation()
-        demo_file_rotation()
-        demo_icons_and_colors()
+        # demo_table_logging()
+        # demo_deferred_evaluation()
+        # demo_file_rotation()
+        # demo_icons_and_colors()
         # demo_cloud_logging_compatibility()
 
         print("\n" + "=" * 60)
