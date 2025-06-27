@@ -15,6 +15,7 @@ import logging
 from typing import Callable, List, Any, Optional, Union
 from .lazy_logger import LazyLogger
 from .colors import Colors
+from .logLevels import LogLevels
 
 
 class TableLogger(LazyLogger):
@@ -43,7 +44,7 @@ class TableLogger(LazyLogger):
     def log_row(
         self,
         row_func: Callable[[], List[Any]],
-        level: str = "INFO",
+        level: LogLevels = LogLevels.INFO,
         color: Optional[Colors] = None,
         **kwargs
     ):
@@ -56,7 +57,7 @@ class TableLogger(LazyLogger):
     def log_table(
         self,
         rows_func: Callable[[], List[List[Any]]],
-        level: str = "INFO",
+        level: LogLevels = LogLevels.INFO,
         color: Optional[Colors] = None,
         **kwargs
     ):
@@ -69,7 +70,7 @@ class TableLogger(LazyLogger):
     def lazy_log_row(
         self,
         row_func: Callable[[], List[Any]],
-        level: str = "INFO",
+        level: LogLevels = LogLevels.INFO,
         color: Optional[Colors] = None,
         **kwargs
     ):
@@ -82,7 +83,7 @@ class TableLogger(LazyLogger):
     def lazy_log_table(
         self,
         rows_func: Callable[[], List[List[Any]]],
-        level: str = "INFO",
+        level: LogLevels = LogLevels.INFO,
         color: Optional[Colors] = None,
         **kwargs
     ):

@@ -7,6 +7,18 @@ from datetime import datetime
 from .colors import Colors
 from .icons import Icons
 
+# from enum import Enum
+from .logLevels import LogLevels
+
+# Shared mapping for log levels to avoid duplication
+# LOG_LEVEL_MAPPING = {
+#     "DEBUG": logging.DEBUG,
+#     "INFO": logging.INFO,
+#     "WARNING": logging.WARNING,
+#     "ERROR": logging.ERROR,
+#     "CRITICAL": logging.CRITICAL,
+# }
+
 
 def ensure_dir_exists(directory_path: str):
     """Create directory if it doesn't exist."""
@@ -137,21 +149,24 @@ class Logger:
 
     def log(
         self,
-        level: str,
+        level: LogLevels,
         msg_func: Callable[[], str],
         color: Optional[Colors] = None,
         *args,
         **kwargs,
     ):
-        levelno = (
-            logging.getLevelName(level.upper()) if isinstance(level, str) else level
-        )
-        if self.logger.isEnabledFor(levelno):
+        # Use shared mapping to avoid deprecated getLevelName
+        # if isinstance(level, str):
+        #     levelno = LOG_LEVEL_MAPPING.get(level.upper(), logging.INFO)
+        # else:
+        #     levelno = level
+
+        if self.logger.isEnabledFor(level.value):
             message = msg_func()
 
             # Create a log record
             record = self.logger.makeRecord(
-                self.logger.name, levelno, "", 0, message, args, None
+                self.logger.name, level.value, "", 0, message, args, None
             )
 
             # Add custom color to the record if specified
@@ -168,7 +183,7 @@ class Logger:
         *args,
         **kwargs,
     ):
-        self.log("DEBUG", msg_func, color, *args, **kwargs)
+        self.log(LogLevels.DEBUG, msg_func, color, *args, **kwargs)
 
     def info(
         self,
@@ -177,7 +192,7 @@ class Logger:
         *args,
         **kwargs,
     ):
-        self.log("INFO", msg_func, color, *args, **kwargs)
+        self.log(LogLevels.INFO, msg_func, color, *args, **kwargs)
 
     def warning(
         self,
@@ -186,7 +201,7 @@ class Logger:
         *args,
         **kwargs,
     ):
-        self.log("WARNING", msg_func, color, *args, **kwargs)
+        self.log(LogLevels.WARNING, msg_func, color, *args, **kwargs)
 
     def error(
         self,
@@ -195,7 +210,7 @@ class Logger:
         *args,
         **kwargs,
     ):
-        self.log("ERROR", msg_func, color, *args, **kwargs)
+        self.log(LogLevels.ERROR, msg_func, color, *args, **kwargs)
 
     def critical(
         self,
@@ -204,7 +219,7 @@ class Logger:
         *args,
         **kwargs,
     ):
-        self.log("CRITICAL", msg_func, color, *args, **kwargs)
+        self.log(LogLevels.CRITICAL, msg_func, color, *args, **kwargs)
 
     def print_header(self, title: str, color: Optional[Colors] = None):
         """

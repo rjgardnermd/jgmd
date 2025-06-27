@@ -3,6 +3,7 @@ from logging.handlers import RotatingFileHandler
 from typing import Callable, Optional, List, Any, Union
 from .logger import Logger
 from .colors import Colors
+from .logLevels import LogLevels
 
 
 class LazyLogBuffer:
@@ -15,7 +16,7 @@ class LazyLogBuffer:
 
     def add(
         self,
-        level: str,
+        level: LogLevels,
         msg_func: Callable[[], str],
         kwargs: Optional[dict] = None,
         color: Optional[Colors] = None,
@@ -24,7 +25,7 @@ class LazyLogBuffer:
 
     def flush(self, logger: "Logger"):
         for level, msg_func, kwargs, color in self._entries:
-            getattr(logger, level.lower())(msg_func, color=color, **kwargs)
+            getattr(logger, level.name.lower())(msg_func, color=color, **kwargs)
         self._entries.clear()
 
     def clear(self):
@@ -74,7 +75,7 @@ class LazyLogger(Logger):
         if self.sync_mode:
             self.debug(msg_func, color=color, **kwargs)
         else:
-            self.buffer.add("DEBUG", msg_func, kwargs, color)
+            self.buffer.add(LogLevels.DEBUG, msg_func, kwargs, color)
 
     def lazy_info(
         self,
@@ -86,7 +87,7 @@ class LazyLogger(Logger):
         if self.sync_mode:
             self.info(msg_func, color=color, **kwargs)
         else:
-            self.buffer.add("INFO", msg_func, kwargs, color)
+            self.buffer.add(LogLevels.INFO, msg_func, kwargs, color)
 
     def lazy_warning(
         self,
@@ -98,7 +99,7 @@ class LazyLogger(Logger):
         if self.sync_mode:
             self.warning(msg_func, color=color, **kwargs)
         else:
-            self.buffer.add("WARNING", msg_func, kwargs, color)
+            self.buffer.add(LogLevels.WARNING, msg_func, kwargs, color)
 
     def lazy_error(
         self,
@@ -110,7 +111,7 @@ class LazyLogger(Logger):
         if self.sync_mode:
             self.error(msg_func, color=color, **kwargs)
         else:
-            self.buffer.add("ERROR", msg_func, kwargs, color)
+            self.buffer.add(LogLevels.ERROR, msg_func, kwargs, color)
 
     def lazy_critical(
         self,
@@ -122,7 +123,7 @@ class LazyLogger(Logger):
         if self.sync_mode:
             self.critical(msg_func, color=color, **kwargs)
         else:
-            self.buffer.add("CRITICAL", msg_func, kwargs, color)
+            self.buffer.add(LogLevels.CRITICAL, msg_func, kwargs, color)
 
     def lazy_print_header(self, title: str, color: Optional[Colors] = None):
         """
