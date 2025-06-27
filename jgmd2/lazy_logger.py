@@ -1,9 +1,10 @@
 import logging
 from logging.handlers import RotatingFileHandler
-from typing import Callable, Optional, List, Any
+from typing import Callable, Optional, List, Any, Union
 import coloredlogs
 from .success_level import add_success_log_level
 from .logger import Logger
+from .color_utils import Colors
 
 
 class LazyLogBuffer:
@@ -12,16 +13,22 @@ class LazyLogBuffer:
     """
 
     def __init__(self):
-        self._entries: List[tuple[str, Callable[[], str], dict]] = []
+        self._entries: List[
+            tuple[str, Callable[[], str], dict, Optional[Union[str, Colors]]]
+        ] = []
 
     def add(
-        self, level: str, msg_func: Callable[[], str], kwargs: Optional[dict] = None
+        self,
+        level: str,
+        msg_func: Callable[[], str],
+        kwargs: Optional[dict] = None,
+        color: Optional[Union[str, Colors]] = None,
     ):
-        self._entries.append((level, msg_func, kwargs or {}))
+        self._entries.append((level, msg_func, kwargs or {}, color))
 
     def flush(self, logger: "Logger"):
-        for level, msg_func, kwargs in self._entries:
-            getattr(logger, level.lower())(msg_func, **kwargs)
+        for level, msg_func, kwargs, color in self._entries:
+            getattr(logger, level.lower())(msg_func, color=color, **kwargs)
         self._entries.clear()
 
     def clear(self):
@@ -49,23 +56,59 @@ class LazyLogger(Logger):
         )
         self.buffer = LazyLogBuffer()
 
-    def lazy_debug(self, msg_func: Callable[[], str], *args, **kwargs):
-        self.buffer.add("DEBUG", msg_func, kwargs)
+    def lazy_debug(
+        self,
+        msg_func: Callable[[], str],
+        color: Optional[Union[str, Colors]] = None,
+        *args,
+        **kwargs
+    ):
+        self.buffer.add("DEBUG", msg_func, kwargs, color)
 
-    def lazy_info(self, msg_func: Callable[[], str], *args, **kwargs):
-        self.buffer.add("INFO", msg_func, kwargs)
+    def lazy_info(
+        self,
+        msg_func: Callable[[], str],
+        color: Optional[Union[str, Colors]] = None,
+        *args,
+        **kwargs
+    ):
+        self.buffer.add("INFO", msg_func, kwargs, color)
 
-    def lazy_warning(self, msg_func: Callable[[], str], *args, **kwargs):
-        self.buffer.add("WARNING", msg_func, kwargs)
+    def lazy_warning(
+        self,
+        msg_func: Callable[[], str],
+        color: Optional[Union[str, Colors]] = None,
+        *args,
+        **kwargs
+    ):
+        self.buffer.add("WARNING", msg_func, kwargs, color)
 
-    def lazy_error(self, msg_func: Callable[[], str], *args, **kwargs):
-        self.buffer.add("ERROR", msg_func, kwargs)
+    def lazy_error(
+        self,
+        msg_func: Callable[[], str],
+        color: Optional[Union[str, Colors]] = None,
+        *args,
+        **kwargs
+    ):
+        self.buffer.add("ERROR", msg_func, kwargs, color)
 
-    def lazy_critical(self, msg_func: Callable[[], str], *args, **kwargs):
-        self.buffer.add("CRITICAL", msg_func, kwargs)
+    def lazy_critical(
+        self,
+        msg_func: Callable[[], str],
+        color: Optional[Union[str, Colors]] = None,
+        *args,
+        **kwargs
+    ):
+        self.buffer.add("CRITICAL", msg_func, kwargs, color)
 
-    def lazy_success(self, msg_func: Callable[[], str], *args, **kwargs):
-        self.buffer.add("SUCCESS", msg_func, kwargs)
+    def lazy_success(
+        self,
+        msg_func: Callable[[], str],
+        color: Optional[Union[str, Colors]] = None,
+        *args,
+        **kwargs
+    ):
+        self.buffer.add("SUCCESS", msg_func, kwargs, color)
 
     def flush_lazy(self):
         self.buffer.flush(self)

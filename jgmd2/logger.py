@@ -1,8 +1,9 @@
 import logging
 from logging.handlers import RotatingFileHandler
-from typing import Callable, Optional
+from typing import Callable, Optional, Union
 import coloredlogs
 from .success_level import add_success_log_level
+from .color_utils import Colors, colorize, get_color_by_name
 
 
 class Logger:
@@ -34,6 +35,7 @@ class Logger:
         add_success_log_level()
         self.logger = logging.getLogger(name)
         self.logger.setLevel(log_level)
+        self.colored_console = colored_console
         self._setup_handlers(
             log_file, log_level, max_bytes, backup_count, colored_console
         )
@@ -74,27 +76,88 @@ class Logger:
         except:
             pass
 
-    def log(self, level: str, msg_func: Callable[[], str], *args, **kwargs):
+    def _apply_color(self, message: str, color: Optional[Union[str, Colors]]) -> str:
+        """Apply color to message if console output is enabled and color is specified."""
+        if not self.colored_console or color is None:
+            return message
+
+        if isinstance(color, str):
+            try:
+                color_code = get_color_by_name(color)
+            except ValueError:
+                # If it's not a recognized color name, treat it as a color code
+                color_code = color
+        else:
+            color_code = color
+
+        return colorize(message, color_code)
+
+    def log(
+        self,
+        level: str,
+        msg_func: Callable[[], str],
+        color: Optional[Union[str, Colors]] = None,
+        *args,
+        **kwargs
+    ):
         levelno = (
             logging.getLevelName(level.upper()) if isinstance(level, str) else level
         )
         if self.logger.isEnabledFor(levelno):
-            self.logger.log(levelno, msg_func(), *args, **kwargs)
+            message = msg_func()
+            colored_message = self._apply_color(message, color)
+            self.logger.log(levelno, colored_message, *args, **kwargs)
 
-    def debug(self, msg_func: Callable[[], str], *args, **kwargs):
-        self.log("DEBUG", msg_func, *args, **kwargs)
+    def debug(
+        self,
+        msg_func: Callable[[], str],
+        color: Optional[Union[str, Colors]] = None,
+        *args,
+        **kwargs
+    ):
+        self.log("DEBUG", msg_func, color, *args, **kwargs)
 
-    def info(self, msg_func: Callable[[], str], *args, **kwargs):
-        self.log("INFO", msg_func, *args, **kwargs)
+    def info(
+        self,
+        msg_func: Callable[[], str],
+        color: Optional[Union[str, Colors]] = None,
+        *args,
+        **kwargs
+    ):
+        self.log("INFO", msg_func, color, *args, **kwargs)
 
-    def warning(self, msg_func: Callable[[], str], *args, **kwargs):
-        self.log("WARNING", msg_func, *args, **kwargs)
+    def warning(
+        self,
+        msg_func: Callable[[], str],
+        color: Optional[Union[str, Colors]] = None,
+        *args,
+        **kwargs
+    ):
+        self.log("WARNING", msg_func, color, *args, **kwargs)
 
-    def error(self, msg_func: Callable[[], str], *args, **kwargs):
-        self.log("ERROR", msg_func, *args, **kwargs)
+    def error(
+        self,
+        msg_func: Callable[[], str],
+        color: Optional[Union[str, Colors]] = None,
+        *args,
+        **kwargs
+    ):
+        self.log("ERROR", msg_func, color, *args, **kwargs)
 
-    def critical(self, msg_func: Callable[[], str], *args, **kwargs):
-        self.log("CRITICAL", msg_func, *args, **kwargs)
+    def critical(
+        self,
+        msg_func: Callable[[], str],
+        color: Optional[Union[str, Colors]] = None,
+        *args,
+        **kwargs
+    ):
+        self.log("CRITICAL", msg_func, color, *args, **kwargs)
 
-    def success(self, msg_func: Callable[[], str], *args, **kwargs):
-        self.log("SUCCESS", msg_func, *args, **kwargs)
+    def success(
+        self,
+        msg_func: Callable[[], str],
+        color: Optional[Union[str, Colors]] = None,
+        *args,
+        **kwargs
+    ):
+        self.log("SUCCESS", msg_func, color, *args, **kwargs)
