@@ -7,9 +7,11 @@ Run this script to see how Logger, LazyLogger, and TableLogger work.
 import time
 import random
 import os
+import logging
 from jgmd2 import Logger, LazyLogger, TableLogger
 from jgmd2.colors import Colors
 from jgmd2.icons import Icons
+from jgmd2.logLevels import LogLevels
 
 
 def expensive_operation():
@@ -24,7 +26,7 @@ def demo_immediate_logging():
         name="immediate_demo",
         log_directory="logs",
         file_name="immediate_demo.log",
-        log_level="DEBUG",
+        log_level=logging.DEBUG,
         colored_console=True,
     )
 
@@ -60,7 +62,7 @@ def demo_lazy_logging():
         name="lazy_demo",
         log_directory="logs",
         file_name="lazy_demo.log",
-        log_level="DEBUG",
+        log_level=logging.DEBUG,
         colored_console=True,
     )
 
@@ -112,7 +114,7 @@ def demo_table_logging():
         name="table_demo",
         log_directory="logs",
         file_name="table_demo.log",
-        log_level="INFO",
+        log_level=logging.INFO,
         colored_console=True,
     )
 
@@ -160,7 +162,9 @@ def demo_table_logging():
 
 def demo_deferred_evaluation():
     """Demonstrate the power of deferred evaluation."""
-    logger = Logger(name="deferred_demo", log_level="INFO", colored_console=True)
+    logger = Logger(
+        name="deferred_demo", log_level=LogLevels.INFO, colored_console=True
+    )
 
     logger.print_header(
         f"{Icons.BULB.value} DEMO: Deferred Evaluation Benefits",
@@ -197,7 +201,7 @@ def demo_file_rotation():
         name="rotation_demo",
         log_directory="logs",
         file_name="rotation_demo.log",
-        log_level="DEBUG",
+        log_level=LogLevels.DEBUG,
         max_bytes=1024,  # Small size to trigger rotation quickly
         backup_count=3,
         colored_console=True,
@@ -223,7 +227,7 @@ def demo_file_rotation():
 
 def demo_icons_and_colors():
     """Demonstrate the new icons and colors enums."""
-    logger = Logger(name="icons_demo", log_level="INFO", colored_console=True)
+    logger = Logger(name="icons_demo", log_level=LogLevels.INFO, colored_console=True)
 
     logger.print_header(
         f"{Icons.STAR.value} DEMO: Icons and Colors", color=Colors.BRIGHT_MAGENTA
@@ -256,7 +260,7 @@ def demo_icons_and_colors():
 
 def demo_cloud_logging_compatibility():
     """Demonstrate cloud logging compatibility with text alternatives."""
-    logger = Logger(name="cloud_demo", log_level="INFO", colored_console=True)
+    logger = Logger(name="cloud_demo", log_level=LogLevels.INFO, colored_console=True)
 
     logger.print_header(
         f"{Icons.TARGET.value} DEMO: Cloud Logging Compatibility",
@@ -314,7 +318,7 @@ def main():
     except KeyboardInterrupt:
         print(f"\n\n{Icons.HAND.value} Demo interrupted by user.")
     except Exception as e:
-        print(f"\n{Icons.BUG.value} Error during demo: {e}")
+        print(f"\n{Icons.ERROR.value} Error during demo: {e}")
 
 
 if __name__ == "__main__":

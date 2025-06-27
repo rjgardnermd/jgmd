@@ -145,7 +145,8 @@ class Logger:
         else:
             level_str = level
 
-        levelno = logging.getLevelName(level_str.upper())
+        # Convert string level to integer level
+        levelno = getattr(logging, level_str.upper())
         if self.logger.isEnabledFor(levelno):
             message = msg_func()
 
