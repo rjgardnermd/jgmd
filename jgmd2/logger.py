@@ -4,7 +4,6 @@ from typing import Callable, Optional, Union
 import sys
 import os
 from datetime import datetime
-from .success_level import add_success_log_level
 from .color_utils import Colors, colorize, get_color_by_name
 
 
@@ -23,7 +22,6 @@ class ColoredStreamHandler(logging.StreamHandler):
         "WARNING": Colors.YELLOW,
         "ERROR": Colors.RED,
         "CRITICAL": Colors.BRIGHT_RED,
-        "SUCCESS": Colors.GREEN,
     }
 
     def __init__(self, stream=None, default_colors=None):
@@ -64,8 +62,7 @@ class ColoredStreamHandler(logging.StreamHandler):
 class Logger:
     """
     Standard logger with immediate (synchronous) logging methods.
-    Supports deferred (lambda/callable) message evaluation, colored console output, file rotation,
-    and a custom SUCCESS log level (green).
+    Supports deferred (lambda/callable) message evaluation, colored console output, file rotation.
 
     File Rotation:
         When file rotation is enabled (log_file specified), files are automatically rotated
@@ -88,7 +85,6 @@ class Logger:
         backup_count: int = 3,
         colored_console: bool = True,
     ):
-        add_success_log_level()
         self.logger = logging.getLogger(name)
         self.logger.setLevel(log_level)
         self.colored_console = colored_console
@@ -211,12 +207,3 @@ class Logger:
         **kwargs,
     ):
         self.log("CRITICAL", msg_func, color, *args, **kwargs)
-
-    def success(
-        self,
-        msg_func: Callable[[], str],
-        color: Optional[Union[str, Colors]] = None,
-        *args,
-        **kwargs,
-    ):
-        self.log("SUCCESS", msg_func, color, *args, **kwargs)

@@ -1,7 +1,6 @@
 import logging
 from logging.handlers import RotatingFileHandler
 from typing import Callable, Optional, List, Any, Union
-from .success_level import add_success_log_level
 from .logger import Logger
 from .color_utils import Colors
 
@@ -37,7 +36,7 @@ class LazyLogBuffer:
 class LazyLogger(Logger):
     """
     Logger that buffers log messages and only emits them when flush_lazy() is called.
-    Use lazy_debug, lazy_info, lazy_warning, lazy_error, lazy_critical, lazy_success to buffer messages.
+    Use lazy_debug, lazy_info, lazy_warning, lazy_error, lazy_critical to buffer messages.
     """
 
     def __init__(
@@ -49,7 +48,6 @@ class LazyLogger(Logger):
         backup_count: int = 3,
         colored_console: bool = True,
     ):
-        add_success_log_level()
         super().__init__(
             name, log_file, log_level, max_bytes, backup_count, colored_console
         )
@@ -99,15 +97,6 @@ class LazyLogger(Logger):
         **kwargs
     ):
         self.buffer.add("CRITICAL", msg_func, kwargs, color)
-
-    def lazy_success(
-        self,
-        msg_func: Callable[[], str],
-        color: Optional[Union[str, Colors]] = None,
-        *args,
-        **kwargs
-    ):
-        self.buffer.add("SUCCESS", msg_func, kwargs, color)
 
     def flush_lazy(self):
         self.buffer.flush(self)
