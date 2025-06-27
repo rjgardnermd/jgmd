@@ -222,6 +222,7 @@ class Logger:
             color: Optional color for the header (defaults to white)
         """
         header_lines = ["=" * 60, title, "=" * 60]
-
-        for line in header_lines:
-            self.info(lambda: line, color=color)
+        header_str = "\n" + "\n".join(header_lines)
+        self.info(lambda: header_str, color=color)
+        # for line in header_lines:
+        #     self.info(lambda: line, color=color)

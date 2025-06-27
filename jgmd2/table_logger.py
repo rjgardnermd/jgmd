@@ -50,7 +50,7 @@ class TableLogger(LazyLogger):
     ):
         def msg_func():
             row = row_func()
-            return tabulate([row], headers=self.headers, tablefmt="grid")
+            return "\n" + tabulate([row], headers=self.headers, tablefmt="grid")
 
         self.log(level, msg_func, color=color, **kwargs)
 
@@ -63,7 +63,7 @@ class TableLogger(LazyLogger):
     ):
         def msg_func():
             rows = rows_func()
-            return tabulate(rows, headers=self.headers, tablefmt="grid")
+            return "\n" + tabulate(rows, headers=self.headers, tablefmt="grid")
 
         self.log(level, msg_func, color=color, **kwargs)
 
@@ -76,7 +76,7 @@ class TableLogger(LazyLogger):
     ):
         def msg_func():
             row = row_func()
-            return tabulate([row], headers=self.headers, tablefmt="grid")
+            return "\n" + tabulate([row], headers=self.headers, tablefmt="grid")
 
         self.buffer.add(level, msg_func, kwargs, color)
 
@@ -89,6 +89,6 @@ class TableLogger(LazyLogger):
     ):
         def msg_func():
             rows = rows_func()
-            return tabulate(rows, headers=self.headers, tablefmt="grid")
+            return "\n" + tabulate(rows, headers=self.headers, tablefmt="grid")
 
         self.buffer.add(level, msg_func, kwargs, color)
