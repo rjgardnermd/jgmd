@@ -260,36 +260,36 @@ def demo_icons_and_colors():
     logger.close()
 
 
-def demo_cloud_logging_compatibility():
-    """Demonstrate cloud logging compatibility with text alternatives."""
-    logger = Logger(name="cloud_demo", log_level=LogLevels.INFO, colored_console=True)
+# def demo_cloud_logging_compatibility():
+#     """Demonstrate cloud logging compatibility with text alternatives."""
+#     logger = Logger(name="cloud_demo", log_level=LogLevels.INFO, colored_console=True)
 
-    logger.print_header(
-        f"{Icons.TARGET.value} DEMO: Cloud Logging Compatibility",
-        color=Colors.BRIGHT_CYAN,
-    )
+#     logger.print_header(
+#         f"{Icons.TARGET.value} DEMO: Cloud Logging Compatibility",
+#         color=Colors.BRIGHT_CYAN,
+#     )
 
-    print("Emoji icons (default):")
-    logger.info(lambda: f"{Icons.get_icon('SUCCESS')} Operation completed")
-    logger.info(lambda: f"{Icons.get_icon('ERROR')} Something went wrong")
-    logger.info(lambda: f"{Icons.get_icon('ROCKET')} Application launched")
+#     print("Emoji icons (default):")
+#     logger.info(lambda: f"{Icons.SUCCESS} Operation completed")
+#     logger.info(lambda: f"{Icons.ERROR} Something went wrong")
+#     logger.info(lambda: f"{Icons.ROCKET} Application launched")
 
-    print("\nText alternatives (cloud-friendly):")
-    logger.info(
-        lambda: f"{Icons.get_icon('SUCCESS', use_icons=False)} Operation completed"
-    )
-    logger.info(
-        lambda: f"{Icons.get_icon('ERROR', use_icons=False)} Something went wrong"
-    )
-    logger.info(
-        lambda: f"{Icons.get_icon('ROCKET', use_icons=False)} Application launched"
-    )
+#     # print("\nText alternatives (cloud-friendly):")
+#     # logger.info(
+#     #     lambda: f"{Icons.get_icon('SUCCESS', use_icons=False)} Operation completed"
+#     # )
+#     # logger.info(
+#     #     lambda: f"{Icons.get_icon('ERROR', use_icons=False)} Something went wrong"
+#     # )
+#     # logger.info(
+#     #     lambda: f"{Icons.get_icon('ROCKET', use_icons=False)} Application launched"
+#     # )
 
-    print("\nEnvironment variable control:")
-    print("Set JGMD_USE_ICONS=false to disable emojis globally")
-    print("Set JGMD_USE_ICONS=true to enable emojis (default)")
+#     print("\nEnvironment variable control:")
+#     print("Set JGMD_USE_ICONS=false to disable emojis globally")
+#     print("Set JGMD_USE_ICONS=true to enable emojis (default)")
 
-    logger.close()
+#     logger.close()
 
 
 def main():
@@ -305,7 +305,7 @@ def main():
         demo_deferred_evaluation()
         demo_file_rotation()
         demo_icons_and_colors()
-        demo_cloud_logging_compatibility()
+        # demo_cloud_logging_compatibility()
 
         print("\n" + "=" * 60)
         print(f"{Icons.PARTY.value} ALL DEMOS COMPLETED!")
