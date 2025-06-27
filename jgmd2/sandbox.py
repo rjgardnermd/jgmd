@@ -17,10 +17,6 @@ def expensive_operation():
 
 def demo_immediate_logging():
     """Demonstrate immediate logging with Logger."""
-    print("\n" + "=" * 60)
-    print("DEMO: Immediate Logging (Logger)")
-    print("=" * 60)
-
     logger = Logger(
         name="immediate_demo",
         log_directory="logs",
@@ -28,6 +24,8 @@ def demo_immediate_logging():
         log_level="DEBUG",
         colored_console=True,
     )
+
+    logger.print_header("🎉 DEMO: Immediate Logging (Logger)")
 
     print("Logging messages immediately...")
 
@@ -47,10 +45,6 @@ def demo_immediate_logging():
 
 def demo_lazy_logging():
     """Demonstrate lazy/buffered logging with LazyLogger."""
-    print("\n" + "=" * 60)
-    print("DEMO: Lazy/Buffered Logging (LazyLogger)")
-    print("=" * 60)
-
     logger = LazyLogger(
         name="lazy_demo",
         log_directory="logs",
@@ -58,6 +52,8 @@ def demo_lazy_logging():
         log_level="DEBUG",
         colored_console=True,
     )
+
+    logger.lazy_print_header("DEMO: Lazy/Buffered Logging (LazyLogger)")
 
     print("Buffering messages (not logged yet)...")
 
@@ -85,10 +81,6 @@ def demo_lazy_logging():
 
 def demo_table_logging():
     """Demonstrate table logging with TableLogger."""
-    print("\n" + "=" * 60)
-    print("DEMO: Table Logging (TableLogger)")
-    print("=" * 60)
-
     # Define table headers
     headers = ["User ID", "Name", "Status", "Last Login"]
 
@@ -100,6 +92,8 @@ def demo_table_logging():
         log_level="INFO",
         colored_console=True,
     )
+
+    logger.print_header("DEMO: Table Logging (TableLogger)")
 
     print("Logging individual rows...")
 
@@ -140,11 +134,9 @@ def demo_table_logging():
 
 def demo_deferred_evaluation():
     """Demonstrate the power of deferred evaluation."""
-    print("\n" + "=" * 60)
-    print("DEMO: Deferred Evaluation Benefits")
-    print("=" * 60)
-
     logger = Logger(name="deferred_demo", log_level="INFO", colored_console=True)
+
+    logger.print_header("DEMO: Deferred Evaluation Benefits")
 
     print("With deferred evaluation (lambda):")
     print("  - Expensive operations only run if log level is enabled")
@@ -172,10 +164,6 @@ def demo_deferred_evaluation():
 
 def demo_file_rotation():
     """Demonstrate file rotation capabilities."""
-    print("\n" + "=" * 60)
-    print("DEMO: File Rotation")
-    print("=" * 60)
-
     logger = Logger(
         name="rotation_demo",
         log_directory="logs",
@@ -185,6 +173,8 @@ def demo_file_rotation():
         backup_count=3,
         colored_console=True,
     )
+
+    logger.print_header("DEMO: File Rotation")
 
     print("Writing many log messages to trigger file rotation...")
 
