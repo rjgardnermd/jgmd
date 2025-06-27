@@ -1,42 +1,46 @@
 import logging
 from logging.handlers import RotatingFileHandler
+from logging import StreamHandler, LogRecord
 from typing import Callable, Optional, Union, Dict
 import sys
-import os
+
+# import os
 from datetime import datetime
 from ..enums.colors import Colors
 from ..enums.log_levels import LogLevels
+from typing import TextIO
+from ...util import ensure_dir_exists
+
+# def ensure_dir_exists(directory_path: str):
+#     """Create directory if it doesn't exist."""
+#     if directory_path and not os.path.exists(directory_path):
+#         os.makedirs(directory_path)
 
 
-def ensure_dir_exists(directory_path: str):
-    """Create directory if it doesn't exist."""
-    if directory_path and not os.path.exists(directory_path):
-        os.makedirs(directory_path)
+DEFAULT_COLORS = {
+    "DEBUG": Colors.BRIGHT_BLACK,
+    "INFO": Colors.BLUE,
+    "WARNING": Colors.YELLOW,
+    "ERROR": Colors.RED,
+    "CRITICAL": Colors.BRIGHT_RED,
+}
 
 
-class ColoredStreamHandler(logging.StreamHandler):
+class ColoredStreamHandler(StreamHandler):
     """Custom stream handler that applies colors to console output with nice formatting."""
 
-    DEFAULT_COLORS = {
-        "DEBUG": Colors.BRIGHT_BLACK,
-        "INFO": Colors.BLUE,
-        "WARNING": Colors.YELLOW,
-        "ERROR": Colors.RED,
-        "CRITICAL": Colors.BRIGHT_RED,
-    }
+    stream: TextIO
 
-    def __init__(self, stream=None):
+    def __init__(self, stream: TextIO = None):
         super().__init__(stream or sys.stdout)
 
     def setDefaultColors(self, default_colors: Dict[str, Colors]):
         """Set default colors for log levels."""
-        self.default_colors = {
-            level: color for level, color in self.DEFAULT_COLORS.items()
-        }
+        self.default_colors = {level: color for level, color in DEFAULT_COLORS.items()}
         if default_colors is not None:
             self.default_colors.update(default_colors)
 
-    def format(self, record):
+    def format(self, record: LogRecord):
         """Format the log record with colors for different parts."""
         # Format timestamp
         timestamp = datetime.fromtimestamp(record.created).strftime("%Y-%m-%d %H:%M:%S")
@@ -58,7 +62,7 @@ class ColoredStreamHandler(logging.StreamHandler):
         # Combine all parts
         return f"{colored_timestamp} {colored_level} {colored_name} {colored_message}"
 
-    def emit(self, record):
+    def emit(self, record: LogRecord):
         try:
             msg = self.format(record)
             self.stream.write(msg + "\n")
