@@ -25,7 +25,7 @@ class Icons(Enum):
     # Error/Failure
     ERROR = "❌"
     FAIL = "💥"
-    BUG = "🐛"
+    BUG = "🪲"
     CRASH = "💀"
 
     # Processing/Progress
