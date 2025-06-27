@@ -14,7 +14,7 @@ except ImportError:
 import logging
 from typing import Callable, List, Any, Optional, Union
 from .lazy_logger import LazyLogger
-from .color_utils import Colors
+from .colors import Colors
 
 
 class TableLogger(LazyLogger):
@@ -24,7 +24,7 @@ class TableLogger(LazyLogger):
         name: str = "jgmd2",
         log_directory: Optional[str] = None,
         file_name: Optional[str] = None,
-        log_level: int = None,
+        log_level: int = logging.INFO,
         max_bytes: int = 5 * 1024 * 1024,
         backup_count: int = 3,
         colored_console: bool = True,
@@ -44,7 +44,7 @@ class TableLogger(LazyLogger):
         self,
         row_func: Callable[[], List[Any]],
         level: str = "INFO",
-        color: Optional[Union[str, Colors]] = None,
+        color: Optional[Colors] = None,
         **kwargs
     ):
         def msg_func():
@@ -57,7 +57,7 @@ class TableLogger(LazyLogger):
         self,
         rows_func: Callable[[], List[List[Any]]],
         level: str = "INFO",
-        color: Optional[Union[str, Colors]] = None,
+        color: Optional[Colors] = None,
         **kwargs
     ):
         def msg_func():
@@ -70,7 +70,7 @@ class TableLogger(LazyLogger):
         self,
         row_func: Callable[[], List[Any]],
         level: str = "INFO",
-        color: Optional[Union[str, Colors]] = None,
+        color: Optional[Colors] = None,
         **kwargs
     ):
         def msg_func():
@@ -83,7 +83,7 @@ class TableLogger(LazyLogger):
         self,
         rows_func: Callable[[], List[List[Any]]],
         level: str = "INFO",
-        color: Optional[Union[str, Colors]] = None,
+        color: Optional[Colors] = None,
         **kwargs
     ):
         def msg_func():

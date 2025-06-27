@@ -4,6 +4,8 @@ import os
 import tempfile
 from unittest.mock import patch, MagicMock
 from jgmd2 import Logger, LazyLogger, TableLogger
+from jgmd2.colors import Colors
+from jgmd2.icons import Icons
 
 
 class TestLogger(unittest.TestCase):
@@ -29,7 +31,7 @@ class TestLogger(unittest.TestCase):
             self.logger.warning(lambda: "warning message")
             self.logger.error(lambda: "error message")
             self.logger.critical(lambda: "critical message")
-            self.logger.info(lambda: "success message", color="green")
+            self.logger.info(lambda: "success message", color=Colors.GREEN)
             self.assertEqual(mock_handle.call_count, 6)
             levels = [call[0][0].levelno for call in mock_handle.call_args_list]
             self.assertIn(logging.DEBUG, levels)
@@ -55,11 +57,35 @@ class TestLogger(unittest.TestCase):
         self.assertIn("file test message", content)
 
     def test_success_log_color(self):
-        self.logger.info(lambda: "successful!", color="green")
+        self.logger.info(lambda: "successful!", color=Colors.GREEN)
         with open(self.log_file, "r") as f:
             content = f.read()
         self.assertIn("successful!", content)
         self.assertIn("INFO", content)
+
+    def test_icons_in_logging(self):
+        self.logger.info(lambda: f"{Icons.SUCCESS.value} Operation completed")
+        with open(self.log_file, "r") as f:
+            content = f.read()
+        self.assertIn("✅", content)
+        self.assertIn("Operation completed", content)
+
+    def test_colors_enum(self):
+        # Test that Colors enum values are strings
+        self.assertIsInstance(Colors.RED.value, str)
+        self.assertIsInstance(Colors.GREEN.value, str)
+        self.assertIsInstance(Colors.BLUE.value, str)
+
+        # Test colorize method
+        colored_text = Colors.colorize("test", Colors.RED)
+        self.assertIn(Colors.RED.value, colored_text)
+        self.assertIn(Colors.RESET.value, colored_text)
+
+    def test_icons_enum(self):
+        # Test that Icons enum values are strings
+        self.assertIsInstance(Icons.SUCCESS.value, str)
+        self.assertIsInstance(Icons.ERROR.value, str)
+        self.assertIsInstance(Icons.INFO.value, str)
 
 
 class TestLazyLogger(unittest.TestCase):
@@ -87,7 +113,7 @@ class TestLazyLogger(unittest.TestCase):
             lambda: called.append("critical") or "critical message"
         )
         self.logger.lazy_info(
-            lambda: called.append("success") or "success message", color="green"
+            lambda: called.append("success") or "success message", color=Colors.GREEN
         )
         # Nothing should be called yet
         self.assertEqual(called, [])
@@ -112,6 +138,16 @@ class TestLazyLogger(unittest.TestCase):
         with open(self.log_file, "r") as f:
             content = f.read()
         self.assertNotIn("should not log", content)
+
+    def test_lazy_icons_and_colors(self):
+        self.logger.lazy_info(
+            lambda: f"{Icons.ROCKET.value} Launching...", color=Colors.BRIGHT_GREEN
+        )
+        self.logger.flush_lazy()
+        with open(self.log_file, "r") as f:
+            content = f.read()
+        self.assertIn("🚀", content)
+        self.assertIn("Launching...", content)
 
 
 class TestTableLogger(unittest.TestCase):
@@ -159,6 +195,16 @@ class TestTableLogger(unittest.TestCase):
         self.assertIn("8", content)
         self.assertIn("9", content)
         self.assertIn("10", content)
+
+    def test_table_with_icons_and_colors(self):
+        self.logger.log_row(
+            lambda: [f"{Icons.USER.value} Alice", "Active"], color=Colors.GREEN
+        )
+        with open(self.log_file, "r") as f:
+            content = f.read()
+        self.assertIn("👤", content)
+        self.assertIn("Alice", content)
+        self.assertIn("Active", content)
 
 
 if __name__ == "__main__":

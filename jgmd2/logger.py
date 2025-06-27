@@ -4,7 +4,8 @@ from typing import Callable, Optional, Union
 import sys
 import os
 from datetime import datetime
-from .color_utils import Colors, colorize, get_color_by_name
+from .colors import Colors
+from .icons import Icons
 
 
 def ensure_dir_exists(directory_path: str):
@@ -17,8 +18,8 @@ class ColoredStreamHandler(logging.StreamHandler):
     """Custom stream handler that applies colors to console output with nice formatting."""
 
     DEFAULT_COLORS = {
-        "DEBUG": Colors.CYAN,
-        "INFO": Colors.WHITE,
+        "DEBUG": Colors.BRIGHT_BLACK,
+        "INFO": Colors.BLUE,
         "WARNING": Colors.YELLOW,
         "ERROR": Colors.RED,
         "CRITICAL": Colors.BRIGHT_RED,
@@ -32,20 +33,20 @@ class ColoredStreamHandler(logging.StreamHandler):
         """Format the log record with colors for different parts."""
         # Format timestamp
         timestamp = datetime.fromtimestamp(record.created).strftime("%Y-%m-%d %H:%M:%S")
-        colored_timestamp = colorize(timestamp, Colors.GREEN)
+        colored_timestamp = Colors.colorize(timestamp, Colors.GREEN)
 
         # Format level name with bold and gray
         level_name = record.levelname
-        colored_level = colorize(level_name, Colors.BOLD + Colors.BRIGHT_BLACK)
+        colored_level = Colors.colorize(level_name, Colors.BOLD)
 
         # Format logger name in blue
-        colored_name = colorize(record.name, Colors.BLUE)
+        colored_name = Colors.colorize(record.name, Colors.BLUE)
 
         # Format message with default color for the level (or custom color if specified)
         default_color = self.default_colors.get(level_name, Colors.WHITE)
         custom_color = getattr(record, "custom_color", None)
         message_color = custom_color if custom_color is not None else default_color
-        colored_message = colorize(record.getMessage(), message_color)
+        colored_message = Colors.colorize(record.getMessage(), message_color)
 
         # Combine all parts
         return f"{colored_timestamp} {colored_level} {colored_name} {colored_message}"
@@ -134,7 +135,7 @@ class Logger:
         self,
         level: str,
         msg_func: Callable[[], str],
-        color: Optional[Union[str, Colors]] = None,
+        color: Optional[Colors] = None,
         *args,
         **kwargs,
     ):
@@ -151,14 +152,7 @@ class Logger:
 
             # Add custom color to the record if specified
             if color is not None:
-                if isinstance(color, str):
-                    try:
-                        color_code = get_color_by_name(color)
-                    except ValueError:
-                        color_code = color
-                else:
-                    color_code = color
-                record.custom_color = color_code
+                record.custom_color = color
 
             # Log the record
             self.logger.handle(record)
@@ -166,7 +160,7 @@ class Logger:
     def debug(
         self,
         msg_func: Callable[[], str],
-        color: Optional[Union[str, Colors]] = None,
+        color: Optional[Colors] = None,
         *args,
         **kwargs,
     ):
@@ -175,7 +169,7 @@ class Logger:
     def info(
         self,
         msg_func: Callable[[], str],
-        color: Optional[Union[str, Colors]] = None,
+        color: Optional[Colors] = None,
         *args,
         **kwargs,
     ):
@@ -184,7 +178,7 @@ class Logger:
     def warning(
         self,
         msg_func: Callable[[], str],
-        color: Optional[Union[str, Colors]] = None,
+        color: Optional[Colors] = None,
         *args,
         **kwargs,
     ):
@@ -193,7 +187,7 @@ class Logger:
     def error(
         self,
         msg_func: Callable[[], str],
-        color: Optional[Union[str, Colors]] = None,
+        color: Optional[Colors] = None,
         *args,
         **kwargs,
     ):
@@ -202,13 +196,13 @@ class Logger:
     def critical(
         self,
         msg_func: Callable[[], str],
-        color: Optional[Union[str, Colors]] = None,
+        color: Optional[Colors] = None,
         *args,
         **kwargs,
     ):
         self.log("CRITICAL", msg_func, color, *args, **kwargs)
 
-    def print_header(self, title: str, color: Optional[Union[str, Colors]] = None):
+    def print_header(self, title: str, color: Optional[Colors] = None):
         """
         Print a formatted header with the given title.
 

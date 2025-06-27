@@ -2,7 +2,7 @@ import logging
 from logging.handlers import RotatingFileHandler
 from typing import Callable, Optional, List, Any, Union
 from .logger import Logger
-from .color_utils import Colors
+from .colors import Colors
 
 
 class LazyLogBuffer:
@@ -11,16 +11,14 @@ class LazyLogBuffer:
     """
 
     def __init__(self):
-        self._entries: List[
-            tuple[str, Callable[[], str], dict, Optional[Union[str, Colors]]]
-        ] = []
+        self._entries: List[tuple[str, Callable[[], str], dict, Optional[Colors]]] = []
 
     def add(
         self,
         level: str,
         msg_func: Callable[[], str],
         kwargs: Optional[dict] = None,
-        color: Optional[Union[str, Colors]] = None,
+        color: Optional[Colors] = None,
     ):
         self._entries.append((level, msg_func, kwargs or {}, color))
 
@@ -63,7 +61,7 @@ class LazyLogger(Logger):
     def lazy_debug(
         self,
         msg_func: Callable[[], str],
-        color: Optional[Union[str, Colors]] = None,
+        color: Optional[Colors] = None,
         *args,
         **kwargs
     ):
@@ -72,7 +70,7 @@ class LazyLogger(Logger):
     def lazy_info(
         self,
         msg_func: Callable[[], str],
-        color: Optional[Union[str, Colors]] = None,
+        color: Optional[Colors] = None,
         *args,
         **kwargs
     ):
@@ -81,7 +79,7 @@ class LazyLogger(Logger):
     def lazy_warning(
         self,
         msg_func: Callable[[], str],
-        color: Optional[Union[str, Colors]] = None,
+        color: Optional[Colors] = None,
         *args,
         **kwargs
     ):
@@ -90,7 +88,7 @@ class LazyLogger(Logger):
     def lazy_error(
         self,
         msg_func: Callable[[], str],
-        color: Optional[Union[str, Colors]] = None,
+        color: Optional[Colors] = None,
         *args,
         **kwargs
     ):
@@ -99,13 +97,13 @@ class LazyLogger(Logger):
     def lazy_critical(
         self,
         msg_func: Callable[[], str],
-        color: Optional[Union[str, Colors]] = None,
+        color: Optional[Colors] = None,
         *args,
         **kwargs
     ):
         self.buffer.add("CRITICAL", msg_func, kwargs, color)
 
-    def lazy_print_header(self, title: str, color: Optional[Union[str, Colors]] = None):
+    def lazy_print_header(self, title: str, color: Optional[Colors] = None):
         """
         Buffer a formatted header with the given title (lazy version).
 
