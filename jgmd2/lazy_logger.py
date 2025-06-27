@@ -35,6 +35,10 @@ class LazyLogger(Logger):
     """
     Logger that buffers log messages and only emits them when flush_lazy() is called.
     Use lazy_debug, lazy_info, lazy_warning, lazy_error, lazy_critical to buffer messages.
+
+    Args:
+        sync_mode: If True, lazy_ methods will log synchronously instead of buffering.
+                  Useful for debugging without changing code.
     """
 
     def __init__(
@@ -46,6 +50,7 @@ class LazyLogger(Logger):
         max_bytes: int = 5 * 1024 * 1024,
         backup_count: int = 3,
         colored_console: bool = True,
+        sync_mode: bool = False,
     ):
         super().__init__(
             name=name,
@@ -57,6 +62,7 @@ class LazyLogger(Logger):
             colored_console=colored_console,
         )
         self.buffer = LazyLogBuffer()
+        self.sync_mode = sync_mode
 
     def lazy_debug(
         self,
@@ -65,7 +71,10 @@ class LazyLogger(Logger):
         *args,
         **kwargs
     ):
-        self.buffer.add("DEBUG", msg_func, kwargs, color)
+        if self.sync_mode:
+            self.debug(msg_func, color=color, **kwargs)
+        else:
+            self.buffer.add("DEBUG", msg_func, kwargs, color)
 
     def lazy_info(
         self,
@@ -74,7 +83,10 @@ class LazyLogger(Logger):
         *args,
         **kwargs
     ):
-        self.buffer.add("INFO", msg_func, kwargs, color)
+        if self.sync_mode:
+            self.info(msg_func, color=color, **kwargs)
+        else:
+            self.buffer.add("INFO", msg_func, kwargs, color)
 
     def lazy_warning(
         self,
@@ -83,7 +95,10 @@ class LazyLogger(Logger):
         *args,
         **kwargs
     ):
-        self.buffer.add("WARNING", msg_func, kwargs, color)
+        if self.sync_mode:
+            self.warning(msg_func, color=color, **kwargs)
+        else:
+            self.buffer.add("WARNING", msg_func, kwargs, color)
 
     def lazy_error(
         self,
@@ -92,7 +107,10 @@ class LazyLogger(Logger):
         *args,
         **kwargs
     ):
-        self.buffer.add("ERROR", msg_func, kwargs, color)
+        if self.sync_mode:
+            self.error(msg_func, color=color, **kwargs)
+        else:
+            self.buffer.add("ERROR", msg_func, kwargs, color)
 
     def lazy_critical(
         self,
@@ -101,7 +119,10 @@ class LazyLogger(Logger):
         *args,
         **kwargs
     ):
-        self.buffer.add("CRITICAL", msg_func, kwargs, color)
+        if self.sync_mode:
+            self.critical(msg_func, color=color, **kwargs)
+        else:
+            self.buffer.add("CRITICAL", msg_func, kwargs, color)
 
     def lazy_print_header(self, title: str, color: Optional[Colors] = None):
         """
@@ -117,10 +138,12 @@ class LazyLogger(Logger):
             self.lazy_info(lambda: line, color=color)
 
     def flush_lazy(self):
-        self.buffer.flush(self)
+        if not self.sync_mode:
+            self.buffer.flush(self)
 
     def clear_lazy(self):
-        self.buffer.clear()
+        if not self.sync_mode:
+            self.buffer.clear()
 
 
 # Example usage (to be removed or moved to docs/tests):
@@ -130,3 +153,9 @@ class LazyLogger(Logger):
 # logger.lazy_info(lambda: f"Deferred info: {expensive_func()}")
 # logger.lazy_success(lambda: "Deferred success!")
 # logger.flush_lazy()
+
+# For debugging, use sync_mode=True to log immediately:
+# debug_logger = LazyLogger("myapp", sync_mode=True)
+# debug_logger.lazy_info(lambda: f"Debug info: {expensive_func()}")  # Logs immediately
+# debug_logger.lazy_error(lambda: "Debug error")  # Logs immediately
+# # No flush needed in sync mode
