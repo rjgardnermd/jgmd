@@ -123,6 +123,19 @@ class LazyLogger(Logger):
         else:
             self.buffer.add(LogLevels.CRITICAL, msg_func, kwargs, color)
 
+    def lazy_success(
+        self,
+        msg_func: Callable[[], str],
+        color: Optional[Colors] = Colors.GREEN,
+        *args,
+        **kwargs
+    ):
+        """Lazy log a success message at CRITICAL level with default green color."""
+        if self.sync_mode:
+            self.success(msg_func, color=color, **kwargs)
+        else:
+            self.buffer.add(LogLevels.CRITICAL, msg_func, kwargs, color)
+
     def lazy_print_header(self, title: str, color: Optional[Colors] = None):
         """
         Buffer a formatted header with the given title (lazy version).

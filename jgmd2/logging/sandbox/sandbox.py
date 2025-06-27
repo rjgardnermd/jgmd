@@ -43,9 +43,8 @@ def demo_immediate_logging():
     logger.warning(lambda: f"{Icons.WARNING.value} Warning: High memory usage detected")
     logger.error(lambda: f"{Icons.ERROR.value} Error: Failed to connect to database")
     logger.critical(lambda: f"{Icons.CRASH.value} Critical: System shutdown required")
-    logger.info(
-        lambda: f"{Icons.SUCCESS.value} Success: Operation completed successfully!",
-        color=Colors.GREEN,
+    logger.success(
+        lambda: f"{Icons.SUCCESS.value} Success: Operation completed successfully!"
     )
 
     print("✓ All messages logged immediately to console and file")
@@ -85,9 +84,8 @@ def demo_lazy_logging():
     logger.lazy_critical(
         lambda: f"{Icons.CRASH.value} Lazy Critical: Data corruption detected"
     )
-    logger.lazy_info(
-        lambda: f"{Icons.SUCCESS.value} Lazy Success: Batch processing completed!",
-        color=Colors.GREEN,
+    logger.lazy_success(
+        lambda: f"{Icons.SUCCESS.value} Lazy Success: Batch processing completed!"
     )
 
     print("✓ Messages buffered (not logged yet)")

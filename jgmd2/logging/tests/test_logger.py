@@ -29,7 +29,7 @@ class TestLogger(unittest.TestCase):
             self.logger.warning(lambda: "warning message")
             self.logger.error(lambda: "error message")
             self.logger.critical(lambda: "critical message")
-            self.logger.info(lambda: "success message", color=Colors.GREEN)
+            self.logger.success(lambda: "success message")
             self.assertEqual(mock_handle.call_count, 6)
             levels = [call[0][0].levelno for call in mock_handle.call_args_list]
             self.assertIn(logging.DEBUG, levels)
@@ -85,6 +85,14 @@ class TestLogger(unittest.TestCase):
         self.assertIsInstance(Icons.ERROR.value, str)
         self.assertIsInstance(Icons.INFO.value, str)
 
+    def test_success_method(self):
+        """Test the success method logs at CRITICAL level with green color."""
+        self.logger.success(lambda: "Operation completed successfully!")
+        with open(self.log_file, "r") as f:
+            content = f.read()
+        self.assertIn("Operation completed successfully!", content)
+        self.assertIn("CRITICAL", content)  # Should log at CRITICAL level
+
 
 class TestLazyLogger(unittest.TestCase):
     def setUp(self):
@@ -110,9 +118,7 @@ class TestLazyLogger(unittest.TestCase):
         self.logger.lazy_critical(
             lambda: called.append("critical") or "critical message"
         )
-        self.logger.lazy_info(
-            lambda: called.append("success") or "success message", color=Colors.GREEN
-        )
+        self.logger.lazy_success(lambda: called.append("success") or "success message")
         # Nothing should be called yet
         self.assertEqual(called, [])
         self.logger.flush_lazy()
@@ -146,6 +152,15 @@ class TestLazyLogger(unittest.TestCase):
             content = f.read()
         self.assertIn("🚀", content)
         self.assertIn("Launching...", content)
+
+    def test_lazy_success_method(self):
+        """Test the lazy_success method logs at CRITICAL level with green color."""
+        self.logger.lazy_success(lambda: "Lazy operation completed successfully!")
+        self.logger.flush_lazy()
+        with open(self.log_file, "r") as f:
+            content = f.read()
+        self.assertIn("Lazy operation completed successfully!", content)
+        self.assertIn("CRITICAL", content)  # Should log at CRITICAL level
 
 
 class TestTableLogger(unittest.TestCase):
