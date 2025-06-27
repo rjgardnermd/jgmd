@@ -6,6 +6,7 @@ from unittest.mock import patch, MagicMock
 from jgmd2 import Logger, LazyLogger, TableLogger
 from jgmd2.colors import Colors
 from jgmd2.icons import Icons
+from jgmd2.logLevels import LogLevels
 
 
 class TestLogger(unittest.TestCase):
@@ -86,6 +87,14 @@ class TestLogger(unittest.TestCase):
         self.assertIsInstance(Icons.SUCCESS.value, str)
         self.assertIsInstance(Icons.ERROR.value, str)
         self.assertIsInstance(Icons.INFO.value, str)
+
+    def test_log_levels_enum(self):
+        # Test that LogLevels enum values are strings
+        self.assertIsInstance(LogLevels.DEBUG.value, str)
+        self.assertIsInstance(LogLevels.INFO.value, str)
+        self.assertIsInstance(LogLevels.WARNING.value, str)
+        self.assertIsInstance(LogLevels.ERROR.value, str)
+        self.assertIsInstance(LogLevels.CRITICAL.value, str)
 
 
 class TestLazyLogger(unittest.TestCase):

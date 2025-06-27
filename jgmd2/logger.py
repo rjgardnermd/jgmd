@@ -6,6 +6,7 @@ import os
 from datetime import datetime
 from .colors import Colors
 from .icons import Icons
+from .logLevels import LogLevels
 
 
 def ensure_dir_exists(directory_path: str):
@@ -18,20 +19,16 @@ class ColoredStreamHandler(logging.StreamHandler):
     """Custom stream handler that applies colors to console output with nice formatting."""
 
     DEFAULT_COLORS = {
-        "DEBUG": Colors.BRIGHT_BLACK,
-        "INFO": Colors.BLUE,
-        "WARNING": Colors.YELLOW,
-        "ERROR": Colors.RED,
-        "CRITICAL": Colors.BRIGHT_RED,
+        LogLevels.DEBUG.value: Colors.BRIGHT_BLACK,
+        LogLevels.INFO.value: Colors.BLUE,
+        LogLevels.WARNING.value: Colors.YELLOW,
+        LogLevels.ERROR.value: Colors.RED,
+        LogLevels.CRITICAL.value: Colors.BRIGHT_RED,
     }
 
-    def __init__(self, stream=None, default_colors: Dict[str, Colors] = None):
+    def __init__(self, stream=None, default_colors=None):
         super().__init__(stream or sys.stdout)
-        self.default_colors = {
-            level: color for level, color in self.DEFAULT_COLORS.items()
-        }
-        if default_colors is not None:
-            self.default_colors.update(default_colors)
+        self.default_colors = default_colors or self.DEFAULT_COLORS
 
     def format(self, record):
         """Format the log record with colors for different parts."""
@@ -137,15 +134,18 @@ class Logger:
 
     def log(
         self,
-        level: str,
+        level: Union[str, LogLevels],
         msg_func: Callable[[], str],
         color: Optional[Colors] = None,
         *args,
         **kwargs,
     ):
-        levelno = (
-            logging.getLevelName(level.upper()) if isinstance(level, str) else level
-        )
+        if isinstance(level, LogLevels):
+            level_str = level.value
+        else:
+            level_str = level
+
+        levelno = logging.getLevelName(level_str.upper())
         if self.logger.isEnabledFor(levelno):
             message = msg_func()
 
@@ -168,7 +168,7 @@ class Logger:
         *args,
         **kwargs,
     ):
-        self.log("DEBUG", msg_func, color, *args, **kwargs)
+        self.log(LogLevels.DEBUG, msg_func, color, *args, **kwargs)
 
     def info(
         self,
@@ -177,7 +177,7 @@ class Logger:
         *args,
         **kwargs,
     ):
-        self.log("INFO", msg_func, color, *args, **kwargs)
+        self.log(LogLevels.INFO, msg_func, color, *args, **kwargs)
 
     def warning(
         self,
@@ -186,7 +186,7 @@ class Logger:
         *args,
         **kwargs,
     ):
-        self.log("WARNING", msg_func, color, *args, **kwargs)
+        self.log(LogLevels.WARNING, msg_func, color, *args, **kwargs)
 
     def error(
         self,
@@ -195,7 +195,7 @@ class Logger:
         *args,
         **kwargs,
     ):
-        self.log("ERROR", msg_func, color, *args, **kwargs)
+        self.log(LogLevels.ERROR, msg_func, color, *args, **kwargs)
 
     def critical(
         self,
@@ -204,7 +204,7 @@ class Logger:
         *args,
         **kwargs,
     ):
-        self.log("CRITICAL", msg_func, color, *args, **kwargs)
+        self.log(LogLevels.CRITICAL, msg_func, color, *args, **kwargs)
 
     def print_header(self, title: str, color: Optional[Colors] = None):
         """
