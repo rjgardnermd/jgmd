@@ -20,9 +20,11 @@ def test_lazy_logger():
     logger = LazyLogger("test_lazy", sync_mode=False)
 
     print("Adding lazy log messages (they will be buffered)...")
+    logger.lazy_debug(lambda: "This is a lazy debug message")
     logger.lazy_info(lambda: "This is a lazy info message")
     logger.lazy_warning(lambda: f"Warning: {expensive_operation()}")
     logger.lazy_error(lambda: "This is a lazy error message")
+    logger.lazy_critical(lambda: "This is a lazy critical message")
 
     print("Messages are buffered, not logged yet.")
     print("Now flushing...")
@@ -36,9 +38,11 @@ def test_lazy_logger():
     sync_logger = LazyLogger("test_sync", sync_mode=True)
 
     print("Adding lazy log messages (they will be logged immediately)...")
+    sync_logger.lazy_debug(lambda: "This is a sync debug message")
     sync_logger.lazy_info(lambda: "This is a sync info message")
     sync_logger.lazy_warning(lambda: f"Sync warning: {expensive_operation()}")
     sync_logger.lazy_error(lambda: "This is a sync error message")
+    sync_logger.lazy_critical(lambda: "This is a sync critical message")
 
     print("Messages were logged immediately due to sync_mode=True")
     print("No flush needed in sync mode.")

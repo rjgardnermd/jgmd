@@ -54,15 +54,15 @@ class ColoredStreamHandler(logging.StreamHandler):
         timestamp = datetime.fromtimestamp(record.created).strftime("%Y-%m-%d %H:%M:%S")
         colored_timestamp = Colors.colorize(timestamp, Colors.GREEN)
 
-        # Format level name with bold and gray
-        level_name = record.levelname
+        # Format level name with bold and gray, padded to 8 characters for alignment
+        level_name = record.levelname.ljust(8)
         colored_level = Colors.colorize(level_name, Colors.BOLD)
 
         # Format logger name in blue
         colored_name = Colors.colorize(record.name, Colors.BLUE)
 
         # Format message with default color for the level (or custom color if specified)
-        default_color = self.default_colors.get(level_name, Colors.WHITE)
+        default_color = self.default_colors.get(record.levelname, Colors.WHITE)
         custom_color = getattr(record, "custom_color", None)
         message_color = custom_color if custom_color is not None else default_color
         colored_message = Colors.colorize(record.getMessage(), message_color)
@@ -140,7 +140,7 @@ class Logger:
                 self.log_file_path, maxBytes=max_bytes, backupCount=backup_count
             )
             file_handler.setFormatter(
-                logging.Formatter("%(asctime)s %(levelname)s %(name)s %(message)s")
+                logging.Formatter("%(asctime)s %(levelname)-8s %(name)s %(message)s")
             )
             self.logger.addHandler(file_handler)
 
