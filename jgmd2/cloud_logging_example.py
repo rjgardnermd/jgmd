@@ -8,6 +8,7 @@ import os
 from jgmd2 import Logger, LazyLogger
 from jgmd2.colors import Colors
 from jgmd2.icons import Icons
+from jgmd2.logLevels import LogLevels
 
 
 def demo_cloud_compatible_logging():
@@ -20,7 +21,7 @@ def demo_cloud_compatible_logging():
         name="cloud_app",
         log_directory="logs",
         file_name="cloud_app.log",
-        log_level="INFO",
+        log_level=LogLevels.INFO,
         colored_console=True,
     )
 
@@ -45,7 +46,7 @@ def demo_mixed_logging():
         name="mixed_app",
         log_directory="logs",
         file_name="mixed_app.log",
-        log_level="INFO",
+        log_level=LogLevels.INFO,
         colored_console=True,
     )
 
@@ -80,7 +81,7 @@ def demo_lazy_cloud_logging():
         name="lazy_cloud_app",
         log_directory="logs",
         file_name="lazy_cloud_app.log",
-        log_level="INFO",
+        log_level=LogLevels.INFO,
         colored_console=True,
     )
 

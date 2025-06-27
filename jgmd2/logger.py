@@ -100,12 +100,13 @@ class Logger:
         name: str = "jgmd2",
         log_directory: Optional[str] = None,
         file_name: Optional[str] = None,
-        log_level: int = logging.INFO,
+        log_level: LogLevels = LogLevels.INFO,
         max_bytes: int = 5 * 1024 * 1024,
         backup_count: int = 3,
         colored_console: bool = True,
         default_colors: Optional[Dict[str, Colors]] = None,
     ):
+        log_level = log_level.value
         self.logger = logging.getLogger(name)
         self.logger.setLevel(log_level)
         self.colored_console = colored_console

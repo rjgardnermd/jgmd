@@ -47,7 +47,7 @@ class LazyLogger(Logger):
         name: str = "jgmd2",
         log_directory: Optional[str] = None,
         file_name: Optional[str] = None,
-        log_level: int = logging.INFO,
+        log_level: LogLevels = LogLevels.INFO,
         max_bytes: int = 5 * 1024 * 1024,
         backup_count: int = 3,
         colored_console: bool = True,

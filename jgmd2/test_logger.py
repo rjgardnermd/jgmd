@@ -6,6 +6,7 @@ from unittest.mock import patch, MagicMock
 from jgmd2 import Logger, LazyLogger, TableLogger
 from jgmd2.colors import Colors
 from jgmd2.icons import Icons
+from jgmd2.logLevels import LogLevels
 
 
 class TestLogger(unittest.TestCase):
@@ -16,7 +17,7 @@ class TestLogger(unittest.TestCase):
             name="testlogger",
             log_directory=self.tempdir.name,
             file_name="testlogger.log",
-            log_level=logging.DEBUG,
+            log_level=LogLevels.DEBUG,
         )
 
     def tearDown(self):
@@ -96,7 +97,7 @@ class TestLazyLogger(unittest.TestCase):
             name="testlazylogger",
             log_directory=self.tempdir.name,
             file_name="testlazylogger.log",
-            log_level=logging.DEBUG,
+            log_level=LogLevels.DEBUG,
         )
 
     def tearDown(self):
@@ -160,7 +161,7 @@ class TestTableLogger(unittest.TestCase):
             name="testtablelogger",
             log_directory=self.tempdir.name,
             file_name="testtablelogger.log",
-            log_level=logging.INFO,
+            log_level=LogLevels.INFO,
         )
 
     def tearDown(self):
