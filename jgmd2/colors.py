@@ -58,18 +58,6 @@ class Colors(Enum):
     STRIKETHROUGH = "\033[9m"
 
     @classmethod
-    def get_level_color(cls, level_name: str) -> str:
-        """Get the appropriate color for a log level."""
-        level_colors = {
-            "DEBUG": cls.BRIGHT_BLACK,
-            "INFO": cls.BLUE,
-            "WARNING": cls.YELLOW,
-            "ERROR": cls.RED,
-            "CRITICAL": cls.BRIGHT_RED,
-        }
-        return level_colors.get(level_name.upper(), cls.WHITE).value
-
-    @classmethod
     def colorize(cls, text: str, color: "Colors") -> str:
         """Apply color to text."""
         return f"{color.value}{text}{cls.RESET.value}"

@@ -1,6 +1,6 @@
 import logging
 from logging.handlers import RotatingFileHandler
-from typing import Callable, Optional, Union
+from typing import Callable, Optional, Union, Dict
 import sys
 import os
 from datetime import datetime
@@ -25,9 +25,13 @@ class ColoredStreamHandler(logging.StreamHandler):
         "CRITICAL": Colors.BRIGHT_RED,
     }
 
-    def __init__(self, stream=None, default_colors=None):
+    def __init__(self, stream=None, default_colors: Dict[str, Colors] = None):
         super().__init__(stream or sys.stdout)
-        self.default_colors = default_colors or self.DEFAULT_COLORS
+        self.default_colors = {
+            level: color for level, color in self.DEFAULT_COLORS.items()
+        }
+        if default_colors is not None:
+            self.default_colors.update(default_colors)
 
     def format(self, record):
         """Format the log record with colors for different parts."""
