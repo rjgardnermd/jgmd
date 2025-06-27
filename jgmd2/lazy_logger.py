@@ -1,5 +1,4 @@
 import logging
-from logging.handlers import RotatingFileHandler
 from typing import Callable, Optional, List, Any, Union
 from .logger import Logger
 from .colors import Colors
@@ -145,18 +144,3 @@ class LazyLogger(Logger):
     def clear_lazy(self):
         if not self.sync_mode:
             self.buffer.clear()
-
-
-# Example usage (to be removed or moved to docs/tests):
-# logger = LazyLogger("myapp", log_file="myapp.log", log_level=logging.DEBUG)
-# logger.debug(lambda: f"Debug value: {expensive_func()}")
-# logger.success(lambda: "Operation completed successfully!")
-# logger.lazy_info(lambda: f"Deferred info: {expensive_func()}")
-# logger.lazy_success(lambda: "Deferred success!")
-# logger.flush_lazy()
-
-# For debugging, use sync_mode=True to log immediately:
-# debug_logger = LazyLogger("myapp", sync_mode=True)
-# debug_logger.lazy_info(lambda: f"Debug info: {expensive_func()}")  # Logs immediately
-# debug_logger.lazy_error(lambda: "Debug error")  # Logs immediately
-# # No flush needed in sync mode

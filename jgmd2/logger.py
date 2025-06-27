@@ -5,19 +5,7 @@ import sys
 import os
 from datetime import datetime
 from .colors import Colors
-from .icons import Icons
-
-# from enum import Enum
 from .logLevels import LogLevels
-
-# Shared mapping for log levels to avoid duplication
-# LOG_LEVEL_MAPPING = {
-#     "DEBUG": logging.DEBUG,
-#     "INFO": logging.INFO,
-#     "WARNING": logging.WARNING,
-#     "ERROR": logging.ERROR,
-#     "CRITICAL": logging.CRITICAL,
-# }
 
 
 def ensure_dir_exists(directory_path: str):
@@ -165,12 +153,6 @@ class Logger:
         *args,
         **kwargs,
     ):
-        # Use shared mapping to avoid deprecated getLevelName
-        # if isinstance(level, str):
-        #     levelno = LOG_LEVEL_MAPPING.get(level.upper(), logging.INFO)
-        # else:
-        #     levelno = level
-
         if self.logger.isEnabledFor(level.value):
             message = msg_func()
 
