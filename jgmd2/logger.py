@@ -10,6 +10,16 @@ class Logger:
     Standard logger with immediate (synchronous) logging methods.
     Supports deferred (lambda/callable) message evaluation, colored console output, file rotation,
     and a custom SUCCESS log level (green).
+
+    File Rotation:
+        When file rotation is enabled (log_file specified), files are automatically rotated
+        when they exceed max_bytes. The naming convention is standard but counterintuitive:
+        - log_file (no number) = NEWEST messages (current log file)
+        - log_file.1 = Previous rotation (second newest)
+        - log_file.2 = Two rotations ago
+        - log_file.N = OLDEST messages (oldest backup)
+        (Higher numbers = older files, not newer!)
+        This is the standard behavior of Python's RotatingFileHandler and most log rotation systems.
     """
 
     def __init__(
