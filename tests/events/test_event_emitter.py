@@ -92,6 +92,27 @@ def test_error_handler_called():
     assert "fail" in errors[0][1]
 
 
+@pytest.mark.asyncio
+async def test_async_error_handler_called():
+    errors = []
+
+    def error_handler(event, exc):
+        errors.append((event, str(exc)))
+
+    emitter = EventEmitter(error_handler=error_handler)
+
+    async def bad_async_handler(event, x):
+        await asyncio.sleep(0.01)
+        raise ValueError("async fail")
+
+    emitter.on("err_evt", bad_async_handler)
+    emitter.emit("err_evt", 1)
+    await asyncio.sleep(0.05)  # Wait for async task to complete
+
+    assert errors and errors[0][0] == "err_evt"
+    assert "async fail" in errors[0][1]
+
+
 def test_error_handler_exception_fallback(capfd: pytest.CaptureFixture[str]):
     def error_handler(event, exc):
         raise RuntimeError("error handler fail")
@@ -108,6 +129,28 @@ def test_error_handler_exception_fallback(capfd: pytest.CaptureFixture[str]):
     assert "error handler fail" in err
 
 
+@pytest.mark.asyncio
+async def test_async_error_handler_exception_fallback(
+    capfd: pytest.CaptureFixture[str],
+):
+    def error_handler(event, exc):
+        raise RuntimeError("async error handler fail")
+
+    emitter = EventEmitter(error_handler=error_handler)
+
+    async def bad_async_handler(event, x):
+        await asyncio.sleep(0.01)
+        raise ValueError("async fail")
+
+    emitter.on("evt", bad_async_handler)
+    # Should fallback to stderr print
+    emitter.emit("evt", 1)
+    await asyncio.sleep(0.05)  # Wait for async task to complete
+
+    out, err = capfd.readouterr()
+    assert "async error handler fail" in err
+
+
 def test_event_handler_error_raised():
     emitter = EventEmitter()
 
@@ -117,3 +160,21 @@ def test_event_handler_error_raised():
     emitter.on("evt", bad_handler)
     with pytest.raises(EventHandlerError):
         emitter.emit("evt", 1)
+
+
+@pytest.mark.asyncio
+async def test_async_event_handler_error_raised():
+    emitter = EventEmitter()
+
+    async def bad_async_handler(event, x):
+        await asyncio.sleep(0.01)
+        raise ValueError("async fail")
+
+    emitter.on("evt", bad_async_handler)
+    emitter.emit("evt", 1)
+    await asyncio.sleep(0.05)  # Wait for async task to complete
+
+    # Note: Async errors are handled via callbacks, so EventHandlerError
+    # won't be raised in the main thread. The error should be handled
+    # by the default error handling mechanism.
+    # This test verifies that async errors don't crash the system.

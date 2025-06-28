@@ -9,7 +9,7 @@ from typing import Optional
 from jgmd2.util.envUtil import load_env, load_local_env
 
 
-class TestEnvConfig(BaseModel):
+class MockEnvConfig(BaseModel):
     """Test Pydantic model for environment variable testing."""
 
     database_url: str
@@ -27,9 +27,9 @@ class TestEnvUtil:
             os.environ,
             {"database_url": "postgresql://localhost/test", "api_key": "test_key_123"},
         ):
-            result = load_env(TestEnvConfig)
+            result = load_env(MockEnvConfig)
 
-            assert isinstance(result, TestEnvConfig)
+            assert isinstance(result, MockEnvConfig)
             assert result.database_url == "postgresql://localhost/test"
             assert result.api_key == "test_key_123"
             assert result.debug_mode is None
@@ -46,9 +46,9 @@ class TestEnvUtil:
                 "port": "8080",
             },
         ):
-            result = load_env(TestEnvConfig)
+            result = load_env(MockEnvConfig)
 
-            assert isinstance(result, TestEnvConfig)
+            assert isinstance(result, MockEnvConfig)
             assert result.database_url == "postgresql://localhost/test"
             assert result.api_key == "test_key_123"
             assert result.debug_mode == "true"
@@ -64,7 +64,7 @@ class TestEnvUtil:
             },
         ):
             with pytest.raises(Exception):  # Pydantic validation error
-                load_env(TestEnvConfig)
+                load_env(MockEnvConfig)
 
     def test_load_env_with_dotenv_path(self):
         """Test loading environment variables from a specific .env file."""
@@ -75,9 +75,9 @@ class TestEnvUtil:
             dotenv_path = f.name
 
         try:
-            result = load_env(TestEnvConfig, dotenv_path=dotenv_path)
+            result = load_env(MockEnvConfig, dotenv_path=dotenv_path)
 
-            assert isinstance(result, TestEnvConfig)
+            assert isinstance(result, MockEnvConfig)
             assert result.database_url == "postgresql://localhost/test"
             assert result.api_key == "test_key_123"
             assert result.debug_mode == "true"
@@ -97,7 +97,7 @@ class TestEnvUtil:
                 dotenv_path = f.name
 
             try:
-                result = load_env(TestEnvConfig, dotenv_path=dotenv_path)
+                result = load_env(MockEnvConfig, dotenv_path=dotenv_path)
 
                 assert result.database_url == "overridden_url"
                 assert result.api_key == "overridden_key"
@@ -117,9 +117,9 @@ class TestEnvUtil:
                 "database_url=postgresql://localhost/test\napi_key=test_key_123\n"
             )
 
-            result = load_local_env(TestEnvConfig, str(test_file))
+            result = load_local_env(MockEnvConfig, str(test_file))
 
-            assert isinstance(result, TestEnvConfig)
+            assert isinstance(result, MockEnvConfig)
             assert result.database_url == "postgresql://localhost/test"
             assert result.api_key == "test_key_123"
 
@@ -137,9 +137,9 @@ class TestEnvUtil:
                 "database_url=postgresql://localhost/test\napi_key=test_key_123\n"
             )
 
-            result = load_local_env(TestEnvConfig, str(test_file))
+            result = load_local_env(MockEnvConfig, str(test_file))
 
-            assert isinstance(result, TestEnvConfig)
+            assert isinstance(result, MockEnvConfig)
             assert result.database_url == "postgresql://localhost/test"
             assert result.api_key == "test_key_123"
 
@@ -183,9 +183,9 @@ class TestEnvUtil:
                 "port": "",
             },
         ):
-            result = load_env(TestEnvConfig)
+            result = load_env(MockEnvConfig)
 
-            assert isinstance(result, TestEnvConfig)
+            assert isinstance(result, MockEnvConfig)
             assert result.database_url == "postgresql://localhost/test"
             assert result.api_key == "test_key_123"
             assert result.debug_mode == ""

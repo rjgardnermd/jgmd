@@ -240,11 +240,11 @@ class EventEmitter(EventEmitterProtocol):
             try:
                 self._error_handler(event, error)
             except Exception as handler_error:
-                # If error handler itself fails, log to stderr as fallback
+                # If error handler itself fails, log to stderr as fallback with red coloring
                 import sys
 
                 print(
-                    f"Error handler failed for event '{event}': {handler_error}",
+                    f"\033[31mError handler failed for event '{event}': {handler_error}\033[0m",
                     file=sys.stderr,
                 )
         else:
