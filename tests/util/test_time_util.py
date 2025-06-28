@@ -21,7 +21,7 @@ class TestTimeUtil:
     def test_time_it_decorator_success(self):
         """Test time_it decorator with successful function."""
 
-        @time_it
+        @time_it()
         def test_function():
             time.sleep(0.01)  # Small delay to ensure measurable time
             return "success"
@@ -39,7 +39,7 @@ class TestTimeUtil:
     def test_time_it_decorator_with_arguments(self):
         """Test time_it decorator with function arguments."""
 
-        @time_it
+        @time_it()
         def test_function(a, b, c=0):
             time.sleep(0.01)
             return a + b + c
@@ -55,7 +55,7 @@ class TestTimeUtil:
     def test_time_it_decorator_with_kwargs(self):
         """Test time_it decorator with keyword arguments."""
 
-        @time_it
+        @time_it()
         def test_function(**kwargs):
             time.sleep(0.01)
             return sum(kwargs.values())
@@ -271,7 +271,7 @@ class TestTimeUtil:
     def test_time_it_decorator_preserves_function_metadata(self):
         """Test that time_it decorator preserves function metadata."""
 
-        @time_it
+        @time_it()
         def test_function():
             """Test function docstring."""
             return "test"

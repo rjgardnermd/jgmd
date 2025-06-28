@@ -1,17 +1,29 @@
 import time
+from typing import Optional
 from datetime import datetime, timezone, timedelta
+from ..protocols import Loggable
 
 
 # create time_it decorator
-def time_it(func):
-    def wrapper(*args, **kwargs):
-        start_time = time.time()
-        result = func(*args, **kwargs)
-        time_taken = round(time.time() - start_time, 4)
-        print(f"function {func.__name__} took {time_taken} seconds")
-        return result
+def time_it(logger: Optional[Loggable] = None, color=None):
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            start_time = time.time()
+            result = func(*args, **kwargs)
+            time_taken = round(time.time() - start_time, 4)
 
-    return wrapper
+            if logger:
+                logger.info(
+                    lambda: f"function {func.__name__} took {time_taken} seconds",
+                    color=color,
+                )
+            else:
+                print(f"function {func.__name__} took {time_taken} seconds")
+            return result
+
+        return wrapper
+
+    return decorator
 
 
 def seconds_since_timestamp(timestamp: float) -> float:
