@@ -295,3 +295,111 @@ class TestTimeUtil:
         recent_timestamp = time.time() - 0.001  # 1ms ago
         result = seconds_since_timestamp(recent_timestamp)
         assert 0 <= result <= 0.1  # Should be very small positive number
+
+    def test_time_it_decorator_with_logger(self):
+        """Test time_it decorator with a logger parameter."""
+        # Create a mock logger
+        mock_logger = MagicMock()
+
+        @time_it(logger=mock_logger)
+        def test_function():
+            time.sleep(0.01)
+            return "success"
+
+        result = test_function()
+
+        assert result == "success"
+        # Verify logger.info was called with the correct message
+        mock_logger.info.assert_called_once()
+        call_args = mock_logger.info.call_args
+        message = call_args[0][0]()  # Call the msg_func to get the actual message
+        assert "function test_function took" in message
+        assert "seconds" in message
+        assert call_args[1] == {"color": None}  # kwargs should be {'color': None}
+
+    def test_time_it_decorator_with_logger_and_color(self):
+        """Test time_it decorator with logger and color parameters."""
+        mock_logger = MagicMock()
+        mock_color = MagicMock()
+
+        @time_it(logger=mock_logger, color=mock_color)
+        def test_function():
+            time.sleep(0.01)
+            return "success"
+
+        result = test_function()
+
+        assert result == "success"
+        # Verify logger.info was called with color parameter
+        mock_logger.info.assert_called_once()
+        call_args = mock_logger.info.call_args
+        message = call_args[0][0]()  # Call the msg_func to get the actual message
+        assert "function test_function took" in message
+        assert "seconds" in message
+        assert call_args[1]["color"] == mock_color  # color parameter
+
+    def test_time_it_decorator_with_logger_and_function_arguments(self):
+        """Test time_it decorator with logger and function arguments."""
+        mock_logger = MagicMock()
+
+        @time_it(logger=mock_logger)
+        def test_function(a, b, c=0):
+            time.sleep(0.01)
+            return a + b + c
+
+        result = test_function(1, 2, 3)
+
+        assert result == 6
+        mock_logger.info.assert_called_once()
+        call_args = mock_logger.info.call_args
+        message = call_args[0][0]()  # Call the msg_func to get the actual message
+        assert "function test_function took" in message
+        assert "seconds" in message
+
+    def test_time_it_decorator_without_logger_uses_print(self):
+        """Test time_it decorator without logger uses print."""
+
+        @time_it()  # No logger specified
+        def test_function():
+            time.sleep(0.01)
+            return "success"
+
+        with patch("builtins.print") as mock_print:
+            result = test_function()
+
+        assert result == "success"
+        mock_print.assert_called_once()
+        call_args = mock_print.call_args[0][0]
+        assert "function test_function took" in call_args
+        assert "seconds" in call_args
+
+    def test_time_it_decorator_logger_vs_print_behavior(self):
+        """Test that logger and print behaviors are mutually exclusive."""
+        mock_logger = MagicMock()
+
+        # Test with logger - should NOT use print
+        @time_it(logger=mock_logger)
+        def test_function_with_logger():
+            time.sleep(0.01)
+            return "success"
+
+        with patch("builtins.print") as mock_print:
+            result = test_function_with_logger()
+
+        assert result == "success"
+        mock_logger.info.assert_called_once()
+        mock_print.assert_not_called()  # Should NOT call print when logger is provided
+
+        # Test without logger - should use print
+        @time_it()  # No logger
+        def test_function_without_logger():
+            time.sleep(0.01)
+            return "success"
+
+        mock_logger.reset_mock()  # Reset the mock
+        with patch("builtins.print") as mock_print:
+            result = test_function_without_logger()
+
+        assert result == "success"
+        mock_logger.info.assert_not_called()  # Should NOT call logger when no logger provided
+        mock_print.assert_called_once()  # Should call print
