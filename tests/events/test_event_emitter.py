@@ -92,7 +92,7 @@ def test_error_handler_called():
     assert "fail" in errors[0][1]
 
 
-def test_error_handler_exception_fallback(capfd):
+def test_error_handler_exception_fallback(capfd: pytest.CaptureFixture[str]):
     def error_handler(event, exc):
         raise RuntimeError("error handler fail")
 
